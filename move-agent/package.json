@@ -1,0 +1,31 @@
+{
+  "name": "move-agent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Simple IoT Platform - Agent",
+  "main": "index.js",
+  "scripts": {
+    "lint": "standard",
+    "lint:fix": "standard --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jairbal/Move.git"
+  },
+  "author": "Jair Balcazar @Jairbal",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jairbal/Move/issues"
+  },
+  "homepage": "https://github.com/jairbal/Move#readme",
+  "devDependencies": {
+    "standard": "^14.3.4"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "defaults": "^1.0.3",
+    "move-utils": "file:../Move-utils",
+    "mqtt": "^4.2.0",
+    "uuid": "^8.3.0"
+  }
+}

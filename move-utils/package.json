@@ -1,0 +1,23 @@
+{
+  "name": "move-utils",
+  "version": "1.0.0",
+  "description": "Utils for Move project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jairbal/Move.git"
+  },
+  "author": "Jair Balcazar @Jairbal.jb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Jairbal/Move/issues"
+  },
+  "homepage": "https://github.com/Jairbal/Move#readme",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "debug": "^4.1.1"
+  }
+}
