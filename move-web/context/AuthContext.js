@@ -12,9 +12,6 @@ export const AuthProvider = ({ children }) => {
 	const [authUserPatient, setAuthUserPatient] = useState();
 	const router = useRouter();
 
-	console.log(user);
-	console.log(authUserPatient);
-
 	useEffect(() => {
 		let isTherapist = false;
 		if (user) {

@@ -37,7 +37,6 @@ export default function Patients({ patients, handleMorePatients }) {
 		}
 	};
 
-	console.log(searchPatient);
 	return (
 		<>
 			<div className="container d-grid">

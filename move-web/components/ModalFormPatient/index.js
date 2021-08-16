@@ -131,9 +131,7 @@ export default function ModalFormPatient({
 	const onSubmit = (values) => {
 		// eslint-disable-next-line no-console
 		if (isUpdate) {
-			console.log("entro", values);
 			if (avatar) {
-				console.log("con avatar", avatar);
 				if (selectedPatient.avatar) {
 					deleteImg(selectedPatient.avatar);
 				}
