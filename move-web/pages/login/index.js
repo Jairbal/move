@@ -32,7 +32,7 @@ export default function Login() {
 		if (authUserTherapist) {
 			router.replace("/adminpage");
 		} else if (authUserPatient) {
-			router.replace("/Home");
+			router.replace("/home");
 		}
 	}, [authUserTherapist, authUserPatient]);
 
