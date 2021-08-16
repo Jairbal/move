@@ -33,14 +33,12 @@ export default function AdminPage() {
 		}
 	}, [authUserPatient]);
 
-	console.log(authUserTherapist);
 	const handleMorePatients = () => {
 		nextPatients(setAllPatients, lastPatient, setLastPatient);
 	};
 
 	useEffect(() => {
 		if (authUserTherapist) {
-			console.log("effect consult");
 			fetchPatients(setAllPatients, setLastPatient);
 		}
 	}, [authUserTherapist]);

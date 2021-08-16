@@ -110,7 +110,6 @@ export const registerPatient = async (data) => {
 
 // Actualizar datos de paciente
 export const updatePatient = async (data, id) => {
-	console.log(data);
 	let avatar = null;
 	if (data.containAvatar) {
 		avatar = data.containAvatar;
@@ -185,7 +184,7 @@ export const nextPatients = (cbData, lastDocument, setLastDocument) => {
 		.limit(3)
 		.onSnapshot(({ docs }) => {
 			const nextlastDocument = docs[docs.length - 1] || null;
-			console.log(nextlastDocument);
+
 			setLastDocument(nextlastDocument);
 			docs.map((doc) => {
 				const data = doc.data();
