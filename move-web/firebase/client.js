@@ -205,9 +205,8 @@ export const nextPatients = (cbData, lastDocument, setLastDocument) => {
 		});
 };
 
-
-export const fetchGames = async (cbData) => {
-	return db
+export const fetchGames = async (cbData) =>
+	db
 		.collection("games")
 		.get()
 		.then(({ docs }) => {
@@ -219,7 +218,6 @@ export const fetchGames = async (cbData) => {
 			});
 			cbData(document);
 		});
-};
 
 // Consultar Administrador (usado para consultar al admin logeado)
 export const fetchTherapist = (uid) =>
