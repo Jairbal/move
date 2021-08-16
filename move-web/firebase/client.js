@@ -205,6 +205,22 @@ export const nextPatients = (cbData, lastDocument, setLastDocument) => {
 		});
 };
 
+
+export const fetchGames = async (cbData) => {
+	return db
+		.collection("games")
+		.get()
+		.then(({ docs }) => {
+			const document = [];
+			docs.map((doc) => {
+				const data = doc.data();
+				const { id } = doc;
+				document.push({ ...data, id });
+			});
+			cbData(document);
+		});
+};
+
 // Consultar Administrador (usado para consultar al admin logeado)
 export const fetchTherapist = (uid) =>
 	db
