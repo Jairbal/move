@@ -164,7 +164,7 @@ void loop() {
 
     client.publish("agent/message", buffer, n);
 
-    delay(10);
+    delay(150);
   }
   client.loop();
 }

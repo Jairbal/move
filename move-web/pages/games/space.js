@@ -17,7 +17,7 @@ export default function space() {
 
 	const socketAgentMessage = useSocket("agent/message", (newAgent) => {
 		// setMetrics(newAgent.metrics);
-		unityContext.send("Player", "setMoveX", newAgent.metrics[0].value);
+		unityContext.send("Player", "setMoveX", -(newAgent.metrics[0].value));
 	});
 
 	const socketAgentDisConnected = useSocket(

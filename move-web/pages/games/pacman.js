@@ -18,7 +18,7 @@ export default function pacman() {
 	const socketAgentMessage = useSocket("agent/message", (newAgent) => {
 		// setMetrics(newAgent.metrics);
 		console.log(newAgent.metrics[0])
-		unityContext.send("Pacman", "setMoveX", newAgent.metrics[0].value);
+		unityContext.send("Pacman", "setMoveX", -(newAgent.metrics[0].value));
 		unityContext.send("Pacman", "setMoveY", newAgent.metrics[1].value);
 	});
 
