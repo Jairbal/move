@@ -2,10 +2,10 @@
 
 import PatientLayout from "components/PatientLayout";
 
-export default function Home() {
-	return <h1> HOME</h1>;
+export default function estadisticas() {
+	return <h1> estadisticas</h1>;
 }
 
-Home.getLayout = function getLayout(page) {
+estadisticas.getLayout = function getLayout(page) {
 	return <PatientLayout>{page} </PatientLayout>;
 };

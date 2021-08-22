@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-param-reassign */
 import { useEffect, useState } from "react";
@@ -5,9 +6,10 @@ import CardPatient from "components/CardPatient";
 import CardGame from "components/CardGame";
 import ModalDeletePatient from "components/ModalDeletePatient";
 import ModalFormPatient from "components/ModalFormPatient";
+import AdminLayout from "components/AdminLayout";
 import { searchFilterPatient, fetchGames } from "firebase/client";
 
-export default function Patients({
+export default function admin_pacientes({
 	patients,
 	handleMorePatients,
 	lastPatient,
@@ -19,6 +21,8 @@ export default function Patients({
 	const [inputSearch, setInputSearch] = useState(""); // Lee el input
 	const [searchPatient, setSearchPatient] = useState(null); // lee la busqueda
 	const [allGames, setAllGames] = useState([]);
+
+	patients = [];
 
 	useEffect(() => {
 		fetchGames(setAllGames);
@@ -263,3 +267,7 @@ export default function Patients({
 		</>
 	);
 }
+
+admin_pacientes.getLayout = function getLayout(page) {
+	return <AdminLayout>{page} </AdminLayout>;
+};

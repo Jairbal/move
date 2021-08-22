@@ -1,17 +1,31 @@
 import Link from "next/link";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
+import { useRouter } from "next/router";
 import { AuthContext } from "context/AuthContext";
-import { PatientPageContext } from "context/PatientPageContext";
+// import { PatientPageContext } from "context/PatientPageContext";
 
 export default function PatientLayout({ children }) {
-	const { authUserPatient } = useContext(AuthContext);
-	const { subMenu } = useContext(PatientPageContext);
+	const { authUserPatient, authUserTherapist, handleSingOut } =
+		useContext(AuthContext);
+
+	const router = useRouter();
+	const subMenu = router.pathname;
 
 	let displayName = "HOLA";
 	if (authUserPatient) {
 		const stringsplit = authUserPatient.name.split(" ");
 		const [firstName] = stringsplit;
 		displayName = firstName;
+	}
+
+	useEffect(() => {
+		if (authUserTherapist) {
+			router.replace("/adminpage");
+		}
+	}, [authUserTherapist]);
+
+	if (!authUserPatient) {
+		return null;
 	}
 
 	return (
@@ -51,10 +65,10 @@ export default function PatientLayout({ children }) {
 								</li>
 								<li
 									className={`elementClick nav-item pb-4  ${
-										subMenu === "/Home" && "nav-link pt-0 ps-0 pe-0"
+										subMenu === "/estadisticas" && "nav-link pt-0 ps-0 pe-0"
 									}`}
 								>
-									<Link href="/Home">
+									<Link href="/estadisticas">
 										<p
 											className="align-middle px-0 cursorPointer"
 											data-bs-toggle="tooltip"
@@ -64,23 +78,27 @@ export default function PatientLayout({ children }) {
 												id="Estadísticas"
 												className="fs-4 bi bi-clipboard-data"
 											/>
-											<span className="ms-1 d-none d-md-inline">Home</span>
+											<span className="ms-1 d-none d-md-inline">
+												Estadisticas
+											</span>
 										</p>
 									</Link>
 								</li>
 								<li
 									className={`elementClick nav-item pb-4  ${
-										subMenu === "Ajustes" && "nav-link pt-0 ps-0 pe-0"
+										subMenu === "/ajustes" && "nav-link pt-0 ps-0 pe-0"
 									}`}
 								>
-									<p
-										className="align-middle px-0 cursorPointer"
-										data-bs-toggle="tooltip"
-										title="Ajustes"
-									>
-										<i id="Ajustes" className="fs-4 bi bi-gear-fill" />
-										<span className="ms-1 d-none d-md-inline">Ajustes</span>
-									</p>
+									<Link href="/ajustes">
+										<p
+											className="align-middle px-0 cursorPointer"
+											data-bs-toggle="tooltip"
+											title="Ajustes"
+										>
+											<i id="Ajustes" className="fs-4 bi bi-gear-fill" />
+											<span className="ms-1 d-none d-md-inline">Ajustes</span>
+										</p>
+									</Link>
 								</li>
 							</ul>
 
@@ -115,7 +133,7 @@ export default function PatientLayout({ children }) {
 									<li>
 										<hr className="dropdown-divider" />
 									</li>
-									<li>
+									<li onClick={handleSingOut}>
 										{" "}
 										<p className="dropdown-item">Cerrar Sesión</p>
 									</li>
