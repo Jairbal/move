@@ -1,19 +1,22 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-param-reassign */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import CardPatient from "components/CardPatient";
 import CardGame from "components/CardGame";
 import ModalDeletePatient from "components/ModalDeletePatient";
 import ModalFormPatient from "components/ModalFormPatient";
 import AdminLayout from "components/AdminLayout";
-import { searchFilterPatient, fetchGames } from "firebase/client";
+import { AuthContext } from "context/AuthContext";
+import {
+	fetchPatients,
+	nextPatients,
+	searchFilterPatient,
+	fetchGames,
+} from "firebase/client";
 
-export default function admin_pacientes({
-	patients,
-	handleMorePatients,
-	lastPatient,
-}) {
+export default function pacientes() {
+	const { authUserTherapist } = useContext(AuthContext);
 	const [selectedPatient, setSelectedPatient] = useState(null);
 	const [isUpdate, setIsUpdate] = useState(false);
 
@@ -22,11 +25,20 @@ export default function admin_pacientes({
 	const [searchPatient, setSearchPatient] = useState(null); // lee la busqueda
 	const [allGames, setAllGames] = useState([]);
 
-	patients = [];
+	const [allPatients, setAllPatients] = useState([]);
+	// eslint-disable-next-line no-underscore-dangle
+	const [lastPatient, setLastPatient] = useState();
+
+	const handleMorePatients = async () => {
+		nextPatients(setAllPatients, lastPatient, setLastPatient);
+	};
 
 	useEffect(() => {
-		fetchGames(setAllGames);
-	}, []);
+		if (authUserTherapist) {
+			fetchGames(setAllGames);
+			fetchPatients(setAllPatients, setLastPatient);
+		}
+	}, [authUserTherapist]);
 
 	const handleUpdateOpenModal = () => {
 		setIsUpdate(true);
@@ -91,7 +103,7 @@ export default function admin_pacientes({
 											setSelectedPatient={setSelectedPatient}
 										/>
 								  ))
-								: patients.map((patient) => (
+								: allPatients.map((patient) => (
 										<CardPatient
 											key={patient.id}
 											patient={patient}
@@ -268,6 +280,6 @@ export default function admin_pacientes({
 	);
 }
 
-admin_pacientes.getLayout = function getLayout(page) {
+pacientes.getLayout = function getLayout(page) {
 	return <AdminLayout>{page} </AdminLayout>;
 };

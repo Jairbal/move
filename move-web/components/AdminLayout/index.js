@@ -1,13 +1,24 @@
 import Link from "next/link";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import { AuthContext } from "context/AuthContext";
 
-export default function AdminLayout({ handleSingOut, children }) {
-	const { authUserTherapist } = useContext(AuthContext);
+export default function AdminLayout({ children }) {
+	const { authUserTherapist, authUserPatient, handleSingOut } =
+		useContext(AuthContext);
 
 	const router = useRouter();
 	const subMenu = router.pathname;
+
+	useEffect(() => {
+		if (authUserPatient) {
+			router.replace("/actividades");
+		}
+	}, [authUserPatient]);
+
+	if (!authUserTherapist) {
+		return null;
+	}
 
 	return (
 		<>
@@ -28,10 +39,10 @@ export default function AdminLayout({ handleSingOut, children }) {
 							<ul className="nav nav-pills flex-column mb-auto align-items-xl-start">
 								<li
 									className={`elementClick nav-item pb-4 ${
-										subMenu === "/admin_pacientes" && "nav-link pt-0 ps-0 pe-0"
+										subMenu === "/admin/pacientes" && "nav-link pt-0 ps-0 pe-0"
 									} ${subMenu === null && "nav-link pt-0 ps-0 pe-0"}`}
 								>
-									<Link href="admin_pacientes">
+									<Link href="/admin/pacientes">
 										<p
 											className="align-middle px-0 cursorPointer"
 											data-bs-toggle="tooltip"
@@ -44,11 +55,11 @@ export default function AdminLayout({ handleSingOut, children }) {
 								</li>
 								<li
 									className={`elementClick nav-item pb-4  ${
-										subMenu === "/admin_estadisticas" &&
+										subMenu === "/admin/estadisticas" &&
 										"nav-link pt-0 ps-0 pe-0"
 									}`}
 								>
-									<Link href="admin_estadisticas">
+									<Link href="/admin/estadisticas">
 										<p
 											className="align-middle px-0 cursorPointer"
 											data-bs-toggle="tooltip"
@@ -66,10 +77,10 @@ export default function AdminLayout({ handleSingOut, children }) {
 								</li>
 								<li
 									className={`elementClick nav-item pb-4  ${
-										subMenu === "/admin_juegos" && "nav-link pt-0 ps-0 pe-0"
+										subMenu === "/admin/juegos" && "nav-link pt-0 ps-0 pe-0"
 									}`}
 								>
-									<Link href="admin_juegos">
+									<Link href="/admin/juegos">
 										<p
 											className="align-middle px-0 cursorPointer"
 											data-bs-toggle="tooltip"
@@ -82,10 +93,10 @@ export default function AdminLayout({ handleSingOut, children }) {
 								</li>
 								<li
 									className={`elementClick nav-item pb-4  ${
-										subMenu === "/admin_ajustes" && "nav-link pt-0 ps-0 pe-0"
+										subMenu === "/admin/ajustes" && "nav-link pt-0 ps-0 pe-0"
 									}`}
 								>
-									<Link href="admin_ajustes">
+									<Link href="/admin/ajustes">
 										<p
 											className="align-middle px-0 cursorPointer"
 											data-bs-toggle="tooltip"
