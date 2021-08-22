@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.css";
 
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles/globals.css";
+import { PatientPageProvider } from "context/PatientPageContext";
 
 function MyApp({ Component, pageProps }) {
 	useEffect(() => {
@@ -16,10 +17,12 @@ function MyApp({ Component, pageProps }) {
 			: null;
 	}, []);
 
+	const getLayout = Component.getLayout || ((page) => page);
+
 	return (
 		<>
 			<Head>
-				<title>Proyecto Tesis</title>
+				<title>Move Tesis</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="preconnect" href="https://fonts.googleapis.com" />
 				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
@@ -31,7 +34,13 @@ function MyApp({ Component, pageProps }) {
 
 			{/* eslint-disable-next-line react/jsx-props-no-spreading */}
 			<AuthProvider>
-				<Component {...pageProps} />
+				{Component.getLayout ? (
+					<PatientPageProvider>
+						{getLayout(<Component {...pageProps} />)}
+					</PatientPageProvider>
+				) : (
+					<Component {...pageProps} />
+				)}
 			</AuthProvider>
 		</>
 	);

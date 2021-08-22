@@ -176,17 +176,44 @@ export const fetchPatients = async (cbData, cbLastDoc) => {
 		});
 };
 
+export const fetchPatientsTest = async () => {
+	const document = [];
+	let lastDocument;
+	db.collection("patients")
+		.orderBy("createdAt", "desc")
+		.limit(3)
+		.onSnapshot(({ docs }) => {
+			lastDocument = docs[docs.length - 1] || null;
+			docs.map((doc) => {
+				const data = doc.data();
+				const { id } = doc;
+				const { createdAt } = data;
+
+				const options = { year: "numeric", month: "long", day: "numeric" };
+				const date = new Date(createdAt.seconds * 1000);
+				const normalizedCreatedAt = new Intl.DateTimeFormat(
+					"es-ES",
+					options
+				).format(date);
+
+				document.push({ ...data, id, createdAt: normalizedCreatedAt });
+			});
+		});
+	return { document, lastDocument };
+};
+
 // Siguiente pagina de pacientes
 export const nextPatients = (cbData, lastDocument, setLastDocument) => {
 	db.collection("patients")
 		.orderBy("createdAt", "desc")
 		.startAfter(lastDocument)
 		.limit(3)
-		.onSnapshot(({ docs }) => {
-			const nextlastDocument = docs[docs.length - 1] || null;
-
+		.get()
+		.then((querySnapshot) => {
+			const nextlastDocument =
+				querySnapshot.docs[querySnapshot.docs.length - 1] || null;
 			setLastDocument(nextlastDocument);
-			docs.map((doc) => {
+			querySnapshot.forEach((doc) => {
 				const data = doc.data();
 				const { id } = doc;
 				const { createdAt } = data;
@@ -205,9 +232,8 @@ export const nextPatients = (cbData, lastDocument, setLastDocument) => {
 		});
 };
 
-
-export const fetchGames = async (cbData) => {
-	return db
+export const fetchGames = async (cbData) =>
+	db
 		.collection("games")
 		.get()
 		.then(({ docs }) => {
@@ -219,7 +245,6 @@ export const fetchGames = async (cbData) => {
 			});
 			cbData(document);
 		});
-};
 
 // Consultar Administrador (usado para consultar al admin logeado)
 export const fetchTherapist = (uid) =>

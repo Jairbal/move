@@ -25,9 +25,9 @@ export default (_req, res) => {
 					month: "2-digit",
 					year: "numeric",
 				}).format(date);
-				return document.push({ ...data, id, createdAt: normalizedCreatedAt });
+				document.push({ ...data, id, createdAt: normalizedCreatedAt });
 			});
-			res.json({ nextLastDocument, document });
+			return res.json({ nextLastDocument, document });
 		})
 		.catch(() => {
 			res.status(404).end();

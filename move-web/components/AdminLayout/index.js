@@ -1,22 +1,13 @@
 import Link from "next/link";
 import { useContext } from "react";
+import { useRouter } from "next/router";
 import { AuthContext } from "context/AuthContext";
 
-export default function AdminLayout({
-	subMenu,
-	setSubMenu,
-	handleSingOut,
-	children,
-}) {
+export default function AdminLayout({ handleSingOut, children }) {
 	const { authUserTherapist } = useContext(AuthContext);
 
-	const handleSubMenu = (e) => {
-		if (!e.target.innerText) {
-			setSubMenu(e.target.id);
-		} else {
-			setSubMenu(e.target.innerText);
-		}
-	};
+	const router = useRouter();
+	const subMenu = router.pathname;
 
 	return (
 		<>
@@ -36,54 +27,74 @@ export default function AdminLayout({
 							<hr />
 							<ul className="nav nav-pills flex-column mb-auto align-items-xl-start">
 								<li
-									onClick={handleSubMenu}
 									className={`elementClick nav-item pb-4 ${
-										subMenu === "Pacientes" && "nav-link pt-0 ps-0 pe-0"
+										subMenu === "/admin_pacientes" && "nav-link pt-0 ps-0 pe-0"
 									} ${subMenu === null && "nav-link pt-0 ps-0 pe-0"}`}
 								>
-									<p
-										className="align-middle px-0 cursorPointer"
-										data-bs-toggle="tooltip"
-										title="Pacientes"
-									>
-										<i id="Pacientes" className="fs-4 bi bi-people-fill" />
-										<span className="ms-1 d-none d-md-inline">Pacientes</span>
-									</p>
+									<Link href="admin_pacientes">
+										<p
+											className="align-middle px-0 cursorPointer"
+											data-bs-toggle="tooltip"
+											title="Pacientes"
+										>
+											<i id="Pacientes" className="fs-4 bi bi-people-fill" />
+											<span className="ms-1 d-none d-md-inline">Pacientes</span>
+										</p>
+									</Link>
 								</li>
 								<li
-									onClick={handleSubMenu}
 									className={`elementClick nav-item pb-4  ${
-										subMenu === "Estadísticas" && "nav-link pt-0 ps-0 pe-0"
+										subMenu === "/admin_estadisticas" &&
+										"nav-link pt-0 ps-0 pe-0"
 									}`}
 								>
-									<p
-										className="align-middle px-0 cursorPointer"
-										data-bs-toggle="tooltip"
-										title="Estadísticas"
-									>
-										<i
-											id="Estadísticas"
-											className="fs-4 bi bi-clipboard-data"
-										/>
-										<span className="ms-1 d-none d-md-inline">
-											Estadísticas
-										</span>
-									</p>
+									<Link href="admin_estadisticas">
+										<p
+											className="align-middle px-0 cursorPointer"
+											data-bs-toggle="tooltip"
+											title="Estadísticas"
+										>
+											<i
+												id="Estadísticas"
+												className="fs-4 bi bi-clipboard-data"
+											/>
+											<span className="ms-1 d-none d-md-inline">
+												Estadísticas
+											</span>
+										</p>
+									</Link>
 								</li>
 								<li
-									onClick={handleSubMenu}
 									className={`elementClick nav-item pb-4  ${
-										subMenu === "Ajustes" && "nav-link pt-0 ps-0 pe-0"
+										subMenu === "/admin_juegos" && "nav-link pt-0 ps-0 pe-0"
 									}`}
 								>
-									<p
-										className="align-middle px-0 cursorPointer"
-										data-bs-toggle="tooltip"
-										title="Ajustes"
-									>
-										<i id="Ajustes" className="fs-4 bi bi-gear-fill" />
-										<span className="ms-1 d-none d-md-inline">Ajustes</span>
-									</p>
+									<Link href="admin_juegos">
+										<p
+											className="align-middle px-0 cursorPointer"
+											data-bs-toggle="tooltip"
+											title="Juegos"
+										>
+											<i id="Juegos" className="fs-4 bi bi-joystick" />
+											<span className="ms-1 d-none d-md-inline">Juegos</span>
+										</p>
+									</Link>
+								</li>
+								<li
+									className={`elementClick nav-item pb-4  ${
+										subMenu === "/admin_ajustes" && "nav-link pt-0 ps-0 pe-0"
+									}`}
+								>
+									<Link href="admin_ajustes">
+										<p
+											className="align-middle px-0 cursorPointer"
+											data-bs-toggle="tooltip"
+											title="Ajustes"
+										>
+											<i id="Ajustes" className="fs-4 bi bi-gear-fill" />
+											<span className="ms-1 d-none d-md-inline">Ajustes</span>
+										</p>
+									</Link>
 								</li>
 							</ul>
 
