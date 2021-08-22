@@ -11,7 +11,7 @@ export default function PatientLayout({ children }) {
 	const router = useRouter();
 	const subMenu = router.pathname;
 
-	let displayName = "HOLA";
+	let displayName = "";
 	if (authUserPatient) {
 		const stringsplit = authUserPatient.name.split(" ");
 		const [firstName] = stringsplit;
@@ -20,7 +20,7 @@ export default function PatientLayout({ children }) {
 
 	useEffect(() => {
 		if (authUserTherapist) {
-			router.replace("/adminpage");
+			router.replace("/admin/pacientes");
 		}
 	}, [authUserTherapist]);
 

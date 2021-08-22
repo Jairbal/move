@@ -1,6 +1,8 @@
+/* eslint-disable camelcase */
 import { Line } from "react-chartjs-2";
+import AdminLayout from "components/AdminLayout";
 
-export default function AdminStatistics() {
+export default function estadisticas() {
 	const data = {
 		labels: ["11/08/2021", "12/08/2021", "13/08/2021"],
 		datasets: [
@@ -180,3 +182,7 @@ export default function AdminStatistics() {
 		</>
 	);
 }
+
+estadisticas.getLayout = function getLayout(page) {
+	return <AdminLayout>{page} </AdminLayout>;
+};

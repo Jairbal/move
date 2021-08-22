@@ -2,7 +2,8 @@
 import useHandleImg from "hooks/useHandleImg";
 import AdminLayout from "components/AdminLayout";
 
-export default function admin_ajustes() {
+export default function ajustes() {
+	// eslint-disable-next-line no-unused-vars
 	const [paths, setPaths, handleImg] = useHandleImg();
 	return (
 		<>
@@ -185,6 +186,6 @@ export default function admin_ajustes() {
 	);
 }
 
-admin_ajustes.getLayout = function getLayout(page) {
+ajustes.getLayout = function getLayout(page) {
 	return <AdminLayout>{page} </AdminLayout>;
 };
