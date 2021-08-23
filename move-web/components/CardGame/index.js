@@ -44,18 +44,18 @@ export default function CardPatient({ game, selectedPatient }) {
         </div>
       </div>
 
-      <style jsx>
-        {`
-          .bgPGame {
-            width: 22rem;
-            height: 9.375rem;
-          }
+			<style jsx>
+				{`
+					.bgPGame {
+						width: 18.75rem;
+						height: 9.375rem;
+					}
 
-          .photo {
-            font-size: 2.9375rem;
-            height: 3.75rem;
-            object-fit: contain;
-          }
+					.photo {
+						font-size: 2.9375rem;
+						height: 3.75rem;
+						object-fit: contain;
+					}
 
           .cardClick:active {
             transform: scale(0.98);

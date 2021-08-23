@@ -1,27 +1,45 @@
 /* eslint-disable camelcase */
+import { useEffect, useState, useContext } from "react";
 import AdminLayout from "components/AdminLayout";
+import { AuthContext } from "context/AuthContext";
+import { fetchGames } from "firebase/client";
+import Link from "next/link";
 
 export default function juegos() {
-	return (
-		<>
-			<h1>JUEGOS</h1>
-			<style jsx>
-				{`
-					.photo {
-						font-size: 50px;
-						height: 69.6px;
-						object-fit: contain;
-					}
+	const { authUserTherapist } = useContext(AuthContext);
 
-					.avatarSelectedPatient {
-						font-size: 35px;
-						width: 50px;
-						object-fit: contain;
-						margin: 0;
-					}
-				`}
-			</style>
-		</>
+	const [allGames, setAllGames] = useState([]);
+
+	useEffect(() => {
+		if (authUserTherapist) {
+			fetchGames(setAllGames);
+		}
+	}, [authUserTherapist]);
+
+	return (
+		<div className="d-flex bg-white scroll">
+      {allGames.map((game) => (
+        <Link href={game.link} key={game.id}>
+          <div className="card  user-select-none cursorPointer cardClick m-1 mb-2 text-primary">
+            <img
+              src={game.cover}
+              width={300}
+              height={150}
+              className="card-img rounded-3 bgGame "
+              alt={game.name}
+            />
+            <div className="rounded-3">
+              <h5 className="card-title fw-bold">{game.name}</h5>
+            </div>
+            <div className="rounded-3">
+              <h5 className="card-title fw-bold">
+                Tiempo Jugado: {game.timePlayed}
+              </h5>
+            </div>
+          </div>
+        </Link>
+      ))}
+    </div>
 	);
 }
 

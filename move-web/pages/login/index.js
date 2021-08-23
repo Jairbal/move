@@ -30,7 +30,7 @@ export default function Login() {
 
 	useEffect(() => {
 		if (authUserTherapist) {
-			router.replace("/admin");
+			router.replace("/admin/pacientes");
 		} else if (authUserPatient) {
 			router.replace("/actividades");
 		}

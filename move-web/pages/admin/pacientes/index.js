@@ -128,7 +128,7 @@ export default function pacientes() {
 
           {selectedPatient && (
             <>
-              <div className="col bg-white">
+              <div className="col-auto bg-white h-auto ">
                 <label className="fw-bolder fs-4  d-flex align-items-center">
                   {selectedPatient.urlAvatar ? (
                     <img
@@ -214,12 +214,12 @@ export default function pacientes() {
                   type="button"
                   data-bs-toggle="modal"
                   data-bs-target="#deletePatientModal"
-                  className="btn btn-outline-danger"
+                  className="btn btn-outline-danger me-3 mb-3 mb-xl-0"
                 >
                   Eliminar Paciente
                 </button>
               </div>
-              <div className="col bg-white scroll listGames">
+              <div className="col-auto m-auto m-xl-0 bg-white scroll listGames">
                 {allGames.map((game) => (
                   <CardGame
                     game={game}
@@ -263,9 +263,12 @@ export default function pacientes() {
 
       <style jsx>
         {`
-          .listGames,
           .listPatient {
-            height: 650px;
+            height: 40.625rem;
+          }
+
+          .listGames {
+            height: 48.4375rem;
           }
 
           .photo {
