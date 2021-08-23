@@ -39,8 +39,8 @@ export default function PatientLayout({ children }) {
 								className="d-flex align-items-center pb-3 mb-xl-0 me-xl-auto text-white text-decoration-none cursorPointer"
 							>
 								<span className="fs-5 d-none d-sm-inline m-3 elementClick cursorPointer">
-									Nombre
-									<strong className="text-primary">APP</strong>
+									MO
+									<strong className="text-primary">VE</strong>
 								</span>
 							</Link>
 							<hr />
