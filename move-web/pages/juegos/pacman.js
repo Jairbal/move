@@ -1,23 +1,54 @@
 /* eslint-disable no-console */
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-unused-vars */
+
 import { useState } from "react";
 import Unity, { UnityContext } from "react-unity-webgl";
 import useSocket from "hooks/useSocket";
 
-export default function pong() {
+export default function pacman() {
 	// si el front se sirve en el mismo sitio que el servidor
 	const [metrics, setMetrics] = useState([0, 0]);
 	const [agentConnected, setAgentConnected] = useState(null);
-
+	let valX = 0;
+	let valY = 0;
 	/* 	const socketAgentConnected = useSocket("agent/connected", (newAgent) => {
 		setAgentConnected(newAgent);
 		console.log("agent Connected", newAgent);
 	}); */
 
 	const socketAgentMessage = useSocket("agent/message", (newAgent) => {
-		// setMetrics(newAgent.metrics);
-		unityContext.send("PlayerPaddle", "MoveInY", newAgent.metrics[1].value);
+		
+		if(newAgent.metrics[0].value < -80) {
+			valX = -1;
+		} else if(newAgent.metrics[0].value > -80 && newAgent.metrics[0].value < -40) {
+			valX = -0,5;
+		} else if(newAgent.metrics[0].value > -40 && newAgent.metrics[0].value < 40) {
+			valX = 0;
+		} else if(newAgent.metrics[0].value > 40 && newAgent.metrics[0].value < 80) {
+			valX = 0,5;
+		} else if(newAgent.metrics[0].value > 80) {
+			valX = 1;
+		}
+
+		console.log(`metric ${newAgent.metrics[0].value}`)
+		console.log(`valX ${valX}`)
+
+		if(newAgent.metrics[1].value < -50) {
+			valY = -1;
+		} else if(newAgent.metrics[1].value > -50 && newAgent.metrics[1].value < -25) {
+			valY = -0,5;
+		} else if(newAgent.metrics[1].value > -25 && newAgent.metrics[1].value < 25) {
+			valY = 0;
+		} else if(newAgent.metrics[1].value > 25 && newAgent.metrics[1].value < 50) {
+			valY = 0,5;
+		} else if(newAgent.metrics[1].value > 50) {
+			valY = 1;
+		}
+
+
+		unityContext.send("Pacman", "setMoveX", valX);
+		unityContext.send("Pacman", "setMoveY", newAgent.metrics[1].value);
 	});
 
 	const socketAgentDisConnected = useSocket(
@@ -30,10 +61,10 @@ export default function pong() {
 	);
 
 	const unityContext = new UnityContext({
-		loaderUrl: "/Games/Pong/Build/pongv2.loader.js",
-		dataUrl: "/Games/Pong/Build/pongv2.data",
-		frameworkUrl: "/Games/Pong/Build/pongv2.framework.js",
-		codeUrl: "/Games/Pong/Build/pongv2.wasm",
+		loaderUrl: "/Games/Pacman/Build/pacman.loader.js",
+		dataUrl: "/Games/Pacman/Build/pacman.data",
+		frameworkUrl: "/Games/Pacman/Build/pacman.framework.js",
+		codeUrl: "/Games/Pacman/Build/pacman.wasm",
 	});
 
 	const unityStyle = {

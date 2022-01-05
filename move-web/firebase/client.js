@@ -329,6 +329,21 @@ export const fetchGamesOfPatient = (ids, setGames) => {
   });
 };
 
+export const fetchDevices = async (cbData) =>
+  db
+    .collection("devices")
+    .get()
+    .then(({ docs }) => {
+      const document = [];
+      docs.map((doc) => {
+        const data = doc.data();
+        const { id } = doc;
+        document.push({ ...data, id });
+      });
+      cbData(document);
+    });
+
+
 // Obtener enlace de descarga de Imagenes
 export const getUrlImg = (path) =>
   firebase.storage().ref().child(path).getDownloadURL();

@@ -5,7 +5,7 @@ import { useState } from "react";
 import Unity, { UnityContext } from "react-unity-webgl";
 import useSocket from "hooks/useSocket";
 
-export default function asteroid() {
+export default function pong() {
 	// si el front se sirve en el mismo sitio que el servidor
 	const [metrics, setMetrics] = useState([0, 0]);
 	const [agentConnected, setAgentConnected] = useState(null);
@@ -17,8 +17,8 @@ export default function asteroid() {
 
 	const socketAgentMessage = useSocket("agent/message", (newAgent) => {
 		// setMetrics(newAgent.metrics);
-		unityContext.send("Player", "setMoveX", newAgent.metrics[0].value);
-		unityContext.send("Player", "setMoveY", newAgent.metrics[1].value);
+		console.log(-(newAgent.metrics[1].value));
+		unityContext.send("PlayerPaddle", "MoveInY", -(newAgent.metrics[1].value));
 	});
 
 	const socketAgentDisConnected = useSocket(
@@ -31,10 +31,10 @@ export default function asteroid() {
 	);
 
 	const unityContext = new UnityContext({
-		loaderUrl: "/Games/Asteroid/Build/asteroid.loader.js",
-		dataUrl: "/Games/Asteroid/Build/asteroid.data",
-		frameworkUrl: "/Games/Asteroid/Build/asteroid.framework.js",
-		codeUrl: "/Games/Asteroid/Build/asteroid.wasm",
+		loaderUrl: "/Games/Pong/Build/pongv2.loader.js",
+		dataUrl: "/Games/Pong/Build/pongv2.data",
+		frameworkUrl: "/Games/Pong/Build/pongv2.framework.js",
+		codeUrl: "/Games/Pong/Build/pongv2.wasm",
 	});
 
 	const unityStyle = {
