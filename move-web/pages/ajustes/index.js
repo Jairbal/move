@@ -7,44 +7,6 @@ export default function ajustes() {
 		<>
 			<div className="container d-grid ">
 				<div className="row gap-3">
-					<div className="col-auto col-lg-5 bg-white  m-auto m-lg-0 d-flex flex-column align-items-center ">
-						<h4 className="fw-bold mt-2">Cambio de Contraseña</h4>
-						<form className="d-flex  flex-column align-items-center">
-							<div className="form-floating mb-3">
-								<input
-									type="password"
-									className="form-control"
-									id="floatingPassword"
-									placeholder="Contraseña"
-								/>
-								<label htmlFor="floatingPassword">Contraseña</label>
-							</div>
-							<div className="form-floating mb-3">
-								<input
-									type="password"
-									className="form-control"
-									id="floatingRepeatPassword"
-									placeholder="Repetir Contraseña"
-								/>
-								<label htmlFor="floatingRepeatPassword">
-									Repetir Contraseña
-								</label>
-							</div>
-							<div className="form-floating mb-3">
-								<input
-									type="password"
-									className="form-control"
-									id="floatingNewPassword"
-									placeholder="Nueva Contraseña"
-								/>
-								<label htmlFor="floatingNewPassword">Nueva contraseña</label>
-							</div>
-							<button type="button" className="btn btn-outline-primary mb-3">
-								Cambiar contraseña
-							</button>
-						</form>
-					</div>
-					{/* Fila 1 Columna 2 */}
 					<div className="col-auto m-auto mt-0 ms-lg-0 bg-white  d-flex flex-column align-items-center">
 						<h4 className="fw-bold mt-2">Cambio de Foto</h4>
 
@@ -83,42 +45,8 @@ export default function ajustes() {
 			<hr />
 			<div className="row mt-3">
 				<div className="row gap-3 d-flex m-auto flex-column align-items-center">
-					{/* Fila 2 Columna 1  */}
-					<div className="col-10 bg-white mb-3">
-						<h4 className="fw-bold mt-2">Agregar nuevo dispositivo</h4>
-						<form className="d-flex flex-column flex-xl-row mb-3 mt-3 align-items-center justify-content-center ">
-							<div className="form-floating  me-3 mb-3">
-								<input
-									type="text"
-									className="form-control form-control-sm "
-									id="floatingInputID"
-									placeholder="ID Dispositivo"
-								/>
-								<label htmlFor="floatingInputID">ID Dispositivo</label>
-							</div>
-							<div className="form-floating  me-3 mb-3">
-								<input
-									type="text"
-									className="form-control form-control-sm"
-									id="floatingInputName"
-									placeholder="Nombre del dispositivo"
-								/>
-								<label htmlFor="floatingInputName">
-									Nombre del dispositivo
-								</label>
-							</div>
-							<span className="text-sm mb-3 m-xl-0 me-xl-3">
-								Nota: Por favor, encender el dispositivo antes de proceder a
-								agregarlo
-							</span>
-							<button type="button" className="btn btn-outline-primary">
-								Agregar
-							</button>
-						</form>
-					</div>
-					{/* Fila 2 Columna 2  */}
 					<div className="col-10 bg-white">
-						<h4 className="fw-bold mt-2">Dispositivos agregados</h4>
+						<h4 className="fw-bold mt-2">Dispositivos Existentes</h4>
 						<table className="table">
 							<thead className="user-select-none">
 								<tr>

@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 import useUser from "hooks/useUser";
 import Link from "next/link";
+import ModalRestorePassword from "components/ModalRestorePassword";
 import { loginWithEmail } from "firebase/client";
 import { AuthContext } from "context/AuthContext";
 import styles, { globalStyles } from "../../styles/Login/styles";
@@ -79,10 +80,6 @@ export default function Login() {
 	return (
 		<>
 			<main className="container">
-				<h1 className="position-absolute  text-white user-select-none">
-					<Link href="/">Proyecto Tesis</Link>
-				</h1>
-
 				<form
 					className="shadow p-3 mb-5 bg-body rounded needs-validation"
 					onSubmit={handleSubmit}
@@ -139,7 +136,14 @@ export default function Login() {
 
 					<p className="text-primary ps-2 textOutline pAutoWidth">
 						{" "}
-						<Link href="/">Has olvidado tu contraseña?</Link>
+						<label
+							data-bs-toggle="modal"
+							data-bs-target="#registerUserModal"
+							href="/"
+							className="cursorPointer"
+						>
+							Has olvidado tu contraseña?
+						</label>
 					</p>
 
 					<div className="d-grid col-6 mx-auto">
@@ -155,6 +159,17 @@ export default function Login() {
 					)}
 				</form>
 			</main>
+
+			{/*  Modal Restore Password */}
+			<div
+				className="modal fade"
+				id="registerUserModal"
+				tabIndex="-1"
+				aria-labelledby="exampleModalLabel"
+				aria-hidden="true"
+			>
+				<ModalRestorePassword />
+			</div>
 
 			<ul className="circles">
 				<li />

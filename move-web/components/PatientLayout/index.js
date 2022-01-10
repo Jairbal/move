@@ -54,9 +54,9 @@ export default function PatientLayout({ children }) {
 										<p
 											className="align-middle px-0 cursorPointer"
 											data-bs-toggle="tooltip"
-											title="Pacientes"
+											title="Actividades"
 										>
-											<i id="Pacientes" className="fs-4 bi bi-people-fill" />
+											<i id="Actividades" className="fs-4 bi bi-joystick" />
 											<span className="ms-1 d-none d-md-inline">
 												Actividades
 											</span>

@@ -18,28 +18,23 @@ export default function juegos() {
 
 	return (
 		<div className="d-flex bg-white scroll">
-      {allGames.map((game) => (
-        <Link href={game.link} key={game.id}>
-          <div className="card  user-select-none cursorPointer cardClick m-1 mb-2 text-primary">
-            <img
-              src={game.cover}
-              width={300}
-              height={150}
-              className="card-img rounded-3 bgGame "
-              alt={game.name}
-            />
-            <div className="rounded-3">
-              <h5 className="card-title fw-bold">{game.name}</h5>
-            </div>
-            <div className="rounded-3">
-              <h5 className="card-title fw-bold">
-                Tiempo Jugado: {game.timePlayed}
-              </h5>
-            </div>
-          </div>
-        </Link>
-      ))}
-    </div>
+			{allGames.map((game) => (
+				<Link href={game.link} key={game.id}>
+					<div className="card  user-select-none cursorPointer cardClick m-1 mb-2 text-primary">
+						<img
+							src={game.cover}
+							width={300}
+							height={150}
+							className="card-img rounded-3 bgGame "
+							alt={game.name}
+						/>
+						<div className="rounded-3">
+							<h5 className="card-title fw-bold">{game.name}</h5>
+						</div>
+					</div>
+				</Link>
+			))}
+		</div>
 	);
 }
 

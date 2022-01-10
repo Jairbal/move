@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { AuthContext } from "context/AuthContext";
 
 export default function AdminLayout({ children }) {
-	const { user, authUserTherapist, authUserPatient, handleSingOut } =
+	const { authUserTherapist, authUserPatient, handleSingOut } =
 		useContext(AuthContext);
 
 	const router = useRouter();
