@@ -1,13 +1,12 @@
 /* eslint-disable camelcase */
 import { useEffect, useState, useContext } from "react";
+import Link from "next/link";
 import AdminLayout from "components/AdminLayout";
 import { AuthContext } from "context/AuthContext";
 import { fetchGames } from "firebase/client";
-import Link from "next/link";
 
 export default function juegos() {
 	const { authUserTherapist } = useContext(AuthContext);
-
 	const [allGames, setAllGames] = useState([]);
 
 	useEffect(() => {

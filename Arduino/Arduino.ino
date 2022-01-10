@@ -31,7 +31,7 @@ const char* password = "a0b9c8d7e6f5";
 *****              CONFIGURACIÓN MQTT              *****
 ***********************************************************/
 // HOST MQTT
-const char* mqtt_server = "192.168.0.103";
+const char* mqtt_server = "192.168.0.105";
 // PORT MQTT
 const int mqtt_port = 1883;
 
@@ -50,7 +50,7 @@ void setup_wifi();
 ***********************************************************/
 
 // Init MPU6050
-void initMPU(){
+void initMPU() {
   if (!mpu.begin()) {
     Serial.println("Failed to find MPU6050 chip");
     while (1) {
