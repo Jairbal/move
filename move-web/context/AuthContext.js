@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
 		singOut().then(() => {
 			setAuthUserTherapist(undefined);
 			setAuthUserPatient(undefined);
-			router.replace("/login");
+			router.replace("/");
 		});
 	};
 
