@@ -61,6 +61,15 @@ export default function pacman() {
 		if (diff) {
 			requestAnimationFrame(tick);
 		}
+
+		// Evento que se llama al dar click en el boton jugar
+		unityContext.on("timeValidate", (validateTime) => {
+			start();
+		});
+
+		return () => {
+			unityContext.removeEventListener("timeValidate");
+		};
 	}, [diff, datesPlayed]);
 
 	useEffect(() => {
@@ -202,7 +211,7 @@ export default function pacman() {
 		return (
 			<div>
 				<h1>{timeFormat(diff)}</h1>
-				<div onClick={start}>
+				<div>
 					<Unity unityContext={unityContext} style={unityStyle} />
 				</div>
 				<style jsx>
