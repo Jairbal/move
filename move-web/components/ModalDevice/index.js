@@ -1,9 +1,18 @@
-import { useEffect, useState } from "react";
-import { useRouter } from 'next/router';
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "context/AuthContext";
+import { fetchDevices } from "firebase/client";
 
-export default function ModalDevice({ devices, selectedGame }) {
+export default function ModalDevice() {
+  const { authUserTherapist } = useContext(AuthContext);
   const [deviceSelected, setDeviceSelected] = useState("");
-  const router = useRouter();
+  const [isDeviceSelected, setisDeviceSelected] = useState(false);
+  const [devices, setDevices] = useState([]);
+
+  useEffect(() => {
+    if (authUserTherapist) {
+      fetchDevices(setDevices);
+    }
+  }, [authUserTherapist]);
 
   return (
     <div className="modal-dialog modal-dialog-scrollable">
