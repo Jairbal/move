@@ -67,11 +67,11 @@ const char* password = "a0b9c8d7e6f5";
 *****              CONFIGURACIÓN MQTT              *****
 ***********************************************************/
 // HOST MQTT
-const char* mqtt_server = "192.168.0.105";
+const char* mqtt_server = "192.168.0.104";
 // PORT MQTT
 const int mqtt_port = 1883;
 
-String agentId = "de50b458-2833-411a-aa93-e54227bef6ea";
+String agentId = "451d0804-6524-4e97-af5d-1ec91673c488";
 
 // PubSubClient
 WiFiClient espClient;
@@ -278,7 +278,7 @@ void loop() {
 
     client.publish("agent/message", buffer, n);
 
-    delay(10);
+    delay(100);
   }
   client.loop();
 

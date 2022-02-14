@@ -15,54 +15,55 @@ import {
   updateDatesPlayed,
 } from "firebase/client";
 import { timeResult, addTime, timeFormat } from "utils/helperTimePlayed";
-import ModalDevice from "components/ModalDevice";
+import ModalAgent from "components/ModalAgent";
 
 export default function pacman() {
   const { authUserTherapist, authUserPatient } = useContext(AuthContext);
   // si el front se sirve en el mismo sitio que el servidor
-  const [metrics, setMetrics] = useState([0, 0]);
   const [agentConnected, setAgentConnected] = useState(null);
-  let valX = 0;
-  let valY = 0;
-
-  useEffect(() => {
-    const btnModal = document.getElementById("btnModal");
-    btnModal.click();
-  }, []);
-
-  const socketAgentMessage = useSocket("agent/message", (newAgent) => {
-    valX = newAgent.metrics[0].value / 20;
-    valY = -(newAgent.metrics[1].value / 20);
-
-    console.log(`ValX = ${valX}`);
-    console.log(`ValY = ${valY}`);
-
-    unityContext.send("Pacman", "setMoveX", valX);
-    unityContext.send("Pacman", "setMoveY", valY);
-  });
-
-  const socketAgentDisConnected = useSocket(
-    "agent/disconnected",
-    (newAgent) => {
-      setAgentConnected(null);
-      setMetrics(null);
-      console.log("agent Disconnected", `Agent Desconectado ${newAgent.id}`);
-    }
-  );
-
+  const [agentSelected, setAgentSelected] = useState(null);
+  const [modalIsOpen, setModalIsOpen] = useState(true);
   // Estados para reloj
   const [diff, setDiff] = useState(null);
   const [initial, setInitial] = useState(null);
   const [initialTime, setInitialTime] = useState(null);
-
   // Estado para almacenar informacion de datesPlayed
   const [datesPlayed, setDatesPlayed] = useState(null);
   const [loadDatesPlayed, setLoadDatesPlayed] = useState(true);
+  var socket = null;
 
-  /* 	const socketAgentConnected = useSocket("agent/connected", (newAgent) => {
-		setAgentConnected(newAgent);
-		console.log("agent Connected", newAgent);
-	}); */
+  let valX = 0;
+  let valY = 0;
+
+  const unityContext = new UnityContext({
+    loaderUrl: "/Games/Pacman/Build/pacman.loader.js",
+    dataUrl: "/Games/Pacman/Build/pacman.data",
+    frameworkUrl: "/Games/Pacman/Build/pacman.framework.js",
+    codeUrl: "/Games/Pacman/Build/pacman.wasm",
+  });
+
+  useSocket("agent/message", (newAgent) => {
+    valX = newAgent.metrics[0].value / 20;
+    valY = -(newAgent.metrics[1].value / 20);
+
+    if (newAgent.agent.uuid === agentSelected) {
+      console.log(`ValX = ${valX}`);
+      console.log(`ValY = ${valY}`);
+
+      unityContext.send("Pacman", "setMoveX", valX);
+      unityContext.send("Pacman", "setMoveY", valY);
+    }
+  });
+
+  useSocket("agent/disconnected", (newAgent) => {
+    setAgentConnected(null);
+    console.log("agent Disconnected", ` ${newAgent.id}`);
+  });
+
+  socket = useSocket("agent/connected", (newAgent) => {
+    setAgentConnected(newAgent);
+    console.log("Agenteeeeeee conectado");
+  });
 
   const tick = () => {
     setDiff(new Date(+new Date() - initial));
@@ -162,63 +163,44 @@ export default function pacman() {
     };
   }, [initial]);
 
-  const unityContext = new UnityContext({
-    loaderUrl: "/Games/Pacman/Build/pacman.loader.js",
-    dataUrl: "/Games/Pacman/Build/pacman.data",
-    frameworkUrl: "/Games/Pacman/Build/pacman.framework.js",
-    codeUrl: "/Games/Pacman/Build/pacman.wasm",
-  });
-
   const unityStyle = {
     height: "90vh",
     width: "90vw",
   };
-
-  if (metrics) {
-    return (
+  return (
+    <div>
+      <h1>{timeFormat(diff)}</h1>
       <div>
-        <h1>{timeFormat(diff)}</h1>
-        <div>
-		<button
-            hidden
-            type="button"
-            id="btnModal"
-            data-bs-toggle="modal"
-            data-bs-target="#modalDevice"
-          ></button>
-          <div
-            className="modal fade"
-            id="modalDevice"
-            aria-labelledby="exampleModalLabel"
-            aria-hidden="true"
-          >
-            <ModalDevice />
-          </div>
+        <ModalAgent
+          setSelected={setAgentSelected}
+          modalIsOpen={modalIsOpen}
+          setModalIsOpen={setModalIsOpen}
+        />
+        {agentSelected !== null && (
           <Unity unityContext={unityContext} style={unityStyle} />
-        </div>
-        <style jsx>
-          {`
-            div {
-              width: 100vw;
-              height: 100vh;
-              background-color: #0d6efd;
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              align-items: center;
-            }
-
-            h1 {
-              text-align: center;
-              color: white;
-              text-shadow: 3px 1px #0d6efd;
-              font-size: 50px;
-              margin: 0;
-            }
-          `}
-        </style>
+        )}
       </div>
-    );
-  }
-  return <div>Por favor, conecte un dispositivo...</div>;
+      <style jsx>
+        {`
+          div {
+            width: 100vw;
+            height: 100vh;
+            background-color: #0d6efd;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+          }
+
+          h1 {
+            text-align: center;
+            color: white;
+            text-shadow: 3px 1px #0d6efd;
+            font-size: 50px;
+            margin: 0;
+          }
+        `}
+      </style>
+    </div>
+  );
 }

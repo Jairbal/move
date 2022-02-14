@@ -363,9 +363,9 @@ export const updateDatesPlayed = (id, data) => {
 // Recuperar contraseña por correo
 export const restorePasswordWithEmail = (email) =>
 	firebase.auth().sendPasswordResetEmail(email);
-export const fetchDevices = async (cbData) =>
+export const fetchAgents = async (cbData) =>
 	db
-		.collection("devices")
+		.collection("agents")
 		.get()
 		.then(({ docs }) => {
 			const document = [];

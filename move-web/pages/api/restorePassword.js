@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { getAuth, sendPasswordResetEmail } from auth;
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 
 export default (_req, res) => {
 

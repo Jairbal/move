@@ -14,13 +14,16 @@ import {
   createDatesPlayed,
   updateDatesPlayed,
 } from "firebase/client";
+
+import ModalAgent from "components/ModalAgent";
 import { timeResult, addTime, timeFormat } from "utils/helperTimePlayed";
 
 export default function pong() {
   const { authUserTherapist, authUserPatient } = useContext(AuthContext);
   // si el front se sirve en el mismo sitio que el servidor
-  const [metrics, setMetrics] = useState([0, 0]);
   const [agentConnected, setAgentConnected] = useState(null);
+  const [agentSelected, setAgentSelected] = useState(null);
+  const [modalIsOpen, setModalIsOpen] = useState(true);
   let valY = 0;
 
   // Estados para reloj
@@ -32,24 +35,25 @@ export default function pong() {
   const [datesPlayed, setDatesPlayed] = useState(null);
   const [loadDatesPlayed, setLoadDatesPlayed] = useState(true);
 
-  const socketAgentMessage = useSocket("agent/message", (newAgent) => {
-    // setMetrics(newAgent.metrics);
+  useSocket("agent/message", (newAgent) => {
+    valY = -(newAgent.metrics[1].value / 20);
 
-    valY = newAgent.metrics[1].value / 20;
+    if (newAgent.agent.uuid === agentSelected) {
+      console.log(`ValY = ${valY}`);
 
-    console.log(`ValY = ${valY}`);
-
-    unityContext.send("PlayerPaddle", "MoveInY", valY);
+      unityContext.send("PlayerPaddle", "MoveInY", valY);
+    }
   });
 
-  const socketAgentDisConnected = useSocket(
-    "agent/disconnected",
-    (newAgent) => {
-      setAgentConnected(null);
-      setMetrics(null);
-      console.log("agent Disconnected", `Agent Desconectado ${newAgent.id}`);
-    }
-  );
+  useSocket("agent/disconnected", (newAgent) => {
+    setAgentConnected(null);
+    console.log("agent Disconnected", `Agent Desconectado ${newAgent.id}`);
+  });
+
+  useSocket("agent/connected", (newAgent) => {
+    setAgentConnected(newAgent);
+    console.log("agent Connected", newAgent);
+  });
 
   const tick = () => {
     setDiff(new Date(+new Date() - initial));
@@ -146,11 +150,6 @@ export default function pong() {
     };
   }, [initial]);
 
-  /* 	const socketAgentConnected = useSocket("agent/connected", (newAgent) => {
-		setAgentConnected(newAgent);
-		console.log("agent Connected", newAgent);
-	}); */
-
   const unityContext = new UnityContext({
     loaderUrl: "/Games/Pong/Build/pong.loader.js",
     dataUrl: "/Games/Pong/Build/pong.data",
@@ -163,36 +162,40 @@ export default function pong() {
     width: "90vw",
   };
 
-  if (metrics) {
-    return (
+  return (
+    <div>
+      <h1>{timeFormat(diff)}</h1>
       <div>
-        <h1>{timeFormat(diff)}</h1>
-        <div>
+        <ModalAgent
+          setSelected={setAgentSelected}
+          modalIsOpen={modalIsOpen}
+          setModalIsOpen={setModalIsOpen}
+        />
+        {agentSelected !== null && (
           <Unity unityContext={unityContext} style={unityStyle} />
-        </div>
-        <style jsx>
-          {`
-            div {
-              width: 100vw;
-              height: 100vh;
-              background-color: #0d6efd;
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              align-items: center;
-            }
-
-            h1 {
-              text-align: center;
-              color: white;
-              text-shadow: 3px 1px #0d6efd;
-              font-size: 50px;
-              margin: 0;
-            }
-          `}
-        </style>
+        )}
       </div>
-    );
-  }
-  return <div>Por favor, conecte un dispositivo...</div>;
+      <style jsx>
+        {`
+          div {
+            width: 100vw;
+            height: 100vh;
+            background-color: #0d6efd;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+          }
+
+          h1 {
+            text-align: center;
+            color: white;
+            text-shadow: 3px 1px #0d6efd;
+            font-size: 50px;
+            margin: 0;
+          }
+        `}
+      </style>
+    </div>
+  );
 }

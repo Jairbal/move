@@ -97,6 +97,8 @@ class MoveAgent extends EventEmitter {
             broadcast =
               payload && payload.agent && payload.agent.uuid !== this._agentId
             break
+          case 'start':
+            this.emit('start', 'ok')
         }
 
         if (broadcast) {
@@ -105,6 +107,8 @@ class MoveAgent extends EventEmitter {
       })
 
       this._client.on('error', () => this.disconnect())
+
+      this._client.on('start', () => this.emit('start', 'ok'))
     }
   }
 
