@@ -1,48 +1,55 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { useEffect, useState } from "react";
-import { getUrlImg, assignGame } from "firebase/client";
-import Link from "next/link";
+import { assignGame } from "firebase/client";
 
 export default function CardPatient({ game, selectedPatient }) {
-  const { name, cover, id } = game;
-  const [isSelected, setIsSelected] = useState(false);
+	const { name, cover, id } = game;
+	const [isSelected, setIsSelected] = useState(false);
 
-  const handleAssignGame = () => {
-    const isAssigned = selectedPatient.games.find((g) => g.idGame === id);
-    if (isAssigned) {
-      selectedPatient.games = selectedPatient.games.filter((g) => g.idGame !== id);
-      assignGame(selectedPatient.games, selectedPatient.id);
-    } else {
-      selectedPatient.games = [...selectedPatient.games, { idGame: id, timePlayed: 0 }];
-      assignGame(selectedPatient.games, selectedPatient.id);
-    }
-  };
+	const handleAssignGame = () => {
+		const isAssigned = selectedPatient.games.find((g) => g.idGame === id);
+		if (isAssigned) {
+			selectedPatient.games = selectedPatient.games.filter(
+				(g) => g.idGame !== id
+			);
+			assignGame(selectedPatient.games, selectedPatient.id);
+		} else {
+			selectedPatient.games = [
+				...selectedPatient.games,
+				{ idGame: id, timePlayed: 0 },
+			];
+			assignGame(selectedPatient.games, selectedPatient.id);
+		}
+	};
 
-  useEffect(() => {
-    if(selectedPatient.games.find((g) => g.idGame === id)){
-      setIsSelected(true);
-    }else {
-      setIsSelected(false);
-    }
-  }, [selectedPatient.games]);
+	useEffect(() => {
+		if (selectedPatient.games.find((g) => g.idGame === id)) {
+			setIsSelected(true);
+		} else {
+			setIsSelected(false);
+		}
+	}, [selectedPatient.games]);
 
-  return (
-    <>
-      <div
-        onClick={handleAssignGame}
-        className={`card  user-select-none cursorPointer cardClick m-1 mb-2 ${isSelected ? 'selected text-primary' : 'text-white'}`}
-      >
-        <img
-          src={cover}
-          width={405}
-          height={150}
-          className="card-img rounded-3 bgGame "
-          alt="..."
-        />
-        <div className="card-img-overlay rounded-3">
-          <h5 className="card-title fw-bold">{name}</h5>
-        </div>
-      </div>
+	return (
+		<>
+			<div
+				onClick={handleAssignGame}
+				className={`card  user-select-none cursorPointer cardClick m-1 mb-2 ${
+					isSelected ? "selected text-primary" : "text-white"
+				}`}
+			>
+				<img
+					src={cover}
+					width={405}
+					height={150}
+					className="card-img rounded-3 bgGame "
+					alt="..."
+				/>
+				<div className="card-img-overlay rounded-3">
+					<h5 className="card-title fw-bold">{name}</h5>
+				</div>
+			</div>
 
 			<style jsx>
 				{`
@@ -57,15 +64,15 @@ export default function CardPatient({ game, selectedPatient }) {
 						object-fit: contain;
 					}
 
-          .cardClick:active {
-            transform: scale(0.98);
-          }
+					.cardClick:active {
+						transform: scale(0.98);
+					}
 
-          .selected {
-            border: 5px solid #0d6efd;
-          }
-        `}
-      </style>
-    </>
-  );
+					.selected {
+						border: 5px solid #0d6efd;
+					}
+				`}
+			</style>
+		</>
+	);
 }

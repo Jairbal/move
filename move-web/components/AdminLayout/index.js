@@ -4,8 +4,13 @@ import { useRouter } from "next/router";
 import { AuthContext } from "context/AuthContext";
 
 export default function AdminLayout({ children }) {
-	const { authUserTherapist, authUserPatient, handleSingOut } =
-		useContext(AuthContext);
+	const {
+		user,
+		authUserTherapist,
+		authUserPatient,
+		handleSingOut,
+		resetStatesAuth,
+	} = useContext(AuthContext);
 
 	const router = useRouter();
 	const subMenu = router.pathname;
@@ -14,7 +19,10 @@ export default function AdminLayout({ children }) {
 		if (authUserPatient) {
 			router.replace("/actividades");
 		}
-	}, [authUserPatient]);
+		if (user === null) {
+			resetStatesAuth();
+		}
+	}, [authUserPatient, user]);
 
 	if (!authUserTherapist) {
 		return null;
@@ -132,14 +140,6 @@ export default function AdminLayout({ children }) {
 									className="dropdown-menu dropdown-menu-dark text-small shadow"
 									aria-labelledby="dropdownUser1"
 								>
-									<li>
-										<button type="button" className=" dropdown-item" href="/">
-											Perfil
-										</button>
-									</li>
-									<li>
-										<hr className="dropdown-divider" />
-									</li>
 									<li onClick={handleSingOut}>
 										{" "}
 										<p className="dropdown-item">Cerrar Sesión</p>

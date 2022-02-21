@@ -29,10 +29,22 @@ export default function pacientes() {
 	const [allPatients, setAllPatients] = useState([]);
 	// eslint-disable-next-line no-underscore-dangle
 	const [lastPatient, setLastPatient] = useState();
+	// State Pacientes sin repetirse
+	const [allPatientsWithoutRepeating, setAllPatientsWithoutRepeating] =
+		useState([]);
 
 	const handleMorePatients = async () => {
-		nextPatients(setAllPatients, lastPatient, setLastPatient);
+		nextPatients(allPatients, setAllPatients, lastPatient, setLastPatient);
 	};
+
+	useEffect(() => {
+		// Filtra pacientes que se repiten que ocurre al Asignar actividad a paciente
+		const result = allPatients.filter(
+			(v, i, a) => a.findIndex((t) => t.id === v.id) === i
+		);
+		// Se pasa a un nuevo estado los pacientes sin repetirse
+		setAllPatientsWithoutRepeating(result);
+	}, [allPatients]);
 
 	useEffect(() => {
 		if (authUserTherapist) {
@@ -83,7 +95,7 @@ export default function pacientes() {
 								onChange={handleReadInputSearch}
 								className="form-control me-2"
 								type="search"
-								placeholder="Buscar por nombre o cédula"
+								placeholder="Buscar por cedula"
 								aria-label="Search"
 							/>
 							<button
@@ -105,7 +117,7 @@ export default function pacientes() {
 											selectedPatient={selectedPatient}
 										/>
 								  ))
-								: allPatients.map((patient) => (
+								: allPatientsWithoutRepeating.map((patient) => (
 										<CardPatient
 											key={patient.id}
 											patient={patient}

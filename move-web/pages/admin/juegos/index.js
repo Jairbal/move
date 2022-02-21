@@ -16,7 +16,7 @@ export default function juegos() {
 	}, [authUserTherapist]);
 
 	return (
-		<div className="d-flex bg-white scroll">
+		<div className="d-flex flex-wrap  justify-content-center bg-white">
 			{allGames.map((game) => (
 				<Link href={game.link} key={game.id}>
 					<div className="card  user-select-none cursorPointer cardClick m-1 mb-2 text-primary">

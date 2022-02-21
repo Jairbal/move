@@ -24,17 +24,23 @@ export const AuthProvider = ({ children }) => {
 
 			if (!isTherapist) {
 				fetchPatient(user.uid)
-					.then((patient) => setAuthUserPatient(patient[0]))
+					.then((patient) => {
+						setAuthUserPatient(patient[0]);
+					})
 					.catch((err) => console.log(err));
 			}
 		}
 	}, [user]);
 
+	const resetStatesAuth = () => {
+		setAuthUserTherapist(undefined);
+		setAuthUserPatient(undefined);
+		router.replace("/");
+	};
+
 	const handleSingOut = () => {
 		singOut().then(() => {
-			setAuthUserTherapist(undefined);
-			setAuthUserPatient(undefined);
-			router.replace("/");
+			resetStatesAuth();
 		});
 	};
 
@@ -45,6 +51,7 @@ export const AuthProvider = ({ children }) => {
 				authUserTherapist,
 				authUserPatient,
 				handleSingOut,
+				resetStatesAuth,
 			}}
 		>
 			{children}

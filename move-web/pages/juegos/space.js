@@ -7,19 +7,24 @@
 import { useState, useEffect, useContext } from "react";
 import Unity, { UnityContext } from "react-unity-webgl";
 import useSocket from "hooks/useSocket";
+import CountTimer from "components/CountTimer";
 import { AuthContext } from "context/AuthContext";
 import {
 	readDatesPlayed,
 	createDatesPlayed,
 	updateDatesPlayed,
 } from "firebase/client";
-import { timeResult, addTime, timeFormat } from "utils/helperTimePlayed";
+
+import ModalAgent from "components/ModalAgent";
+import { timeResult, addTime } from "utils/helperTimePlayed";
 
 export default function space() {
 	const { authUserTherapist, authUserPatient } = useContext(AuthContext);
 	// si el front se sirve en el mismo sitio que el servidor
 	const [metrics, setMetrics] = useState([0, 0]);
 	const [agentConnected, setAgentConnected] = useState(null);
+	const [agentSelected, setAgentSelected] = useState(null);
+	const [modalIsOpen, setModalIsOpen] = useState(true);
 
 	// Estados para reloj
 	const [diff, setDiff] = useState(null);
@@ -156,38 +161,52 @@ export default function space() {
 
 	const unityStyle = {
 		height: "90vh",
-		width: "90vw",
+		width: "100vw",
 	};
 
 	if (metrics) {
 		return (
-			<div>
-				<h1>{timeFormat(diff)}</h1>
-				<div>
-					<Unity unityContext={unityContext} style={unityStyle} />
+			<>
+				<div className="wrapper">
+					{/* <h1>{timeFormat(diff)}</h1> */}
+
+					<div className="unity">
+						<ModalAgent
+							setSelected={setAgentSelected}
+							modalIsOpen={modalIsOpen}
+							setModalIsOpen={setModalIsOpen}
+						/>
+						{agentSelected !== null && (
+							<>
+								<CountTimer time={diff} />
+								<Unity unityContext={unityContext} style={unityStyle} />
+							</>
+						)}
+					</div>
 				</div>
+
 				<style jsx>
 					{`
-						div {
+						.wrapper {
+							background-color: #0d6efd;
 							width: 100vw;
 							height: 100vh;
-							background-color: #0d6efd;
 							display: flex;
-							flex-direction: column;
 							justify-content: center;
-							align-items: center;
+							align-items: flex-end;
 						}
 
 						h1 {
 							text-align: center;
 							color: white;
+							margin-bottom: 13px;
 							text-shadow: 3px 1px #0d6efd;
 							font-size: 50px;
 							margin: 0;
 						}
 					`}
 				</style>
-			</div>
+			</>
 		);
 	}
 	return <div>Por favor, conecte un dispositivo...</div>;

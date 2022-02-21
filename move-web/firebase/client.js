@@ -6,7 +6,6 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/storage";
 import "firebase/auth";
-import { doc } from "prettier";
 
 const firebaseConfig = {
 	apiKey: "AIzaSyBnUH3v4rbxTfCeMZc1YJ7aM8D5bBYq38Q",
@@ -25,6 +24,8 @@ const firebaseConfig = {
 // Inicializar base de datos Firestore
 const db = firebase.firestore();
 
+const numberOfPatients = 2;
+
 // Mapear la informacion del usuario autenticado
 const mapUserFormFirebaseAuthToUser = (user) => {
 	const { email, displayName, emailVerified, uid } = user;
@@ -42,6 +43,8 @@ export const onAuthStateChanged = (onChange) =>
 		if (user) {
 			const normalizedUser = mapUserFormFirebaseAuthToUser(user);
 			onChange(normalizedUser);
+		} else {
+			onChange(null);
 		}
 	});
 
@@ -156,7 +159,7 @@ export const fetchPatients = async (cbData, cbLastDoc) => {
 	return db
 		.collection("patients")
 		.orderBy("createdAt", "desc")
-		.limit(3)
+		.limit(numberOfPatients)
 		.onSnapshot(({ docs }) => {
 			const lastDocument = docs[docs.length - 1] || null;
 			const document = [];
@@ -185,7 +188,8 @@ export const fetchPatientsTest = async () => {
 	db.collection("patients")
 		.orderBy("createdAt", "desc")
 		.limit(3)
-		.onSnapshot(({ docs }) => {
+		.get()
+		.then((docs) => {
 			lastDocument = docs[docs.length - 1] || null;
 			docs.map((doc) => {
 				const data = doc.data();
@@ -201,22 +205,25 @@ export const fetchPatientsTest = async () => {
 
 				document.push({ ...data, id, createdAt: normalizedCreatedAt });
 			});
+			return { document, lastDocument };
 		});
-	return { document, lastDocument };
 };
 
 // Siguiente pagina de pacientes
-export const nextPatients = (cbData, lastDocument, setLastDocument) => {
+export const nextPatients = (
+	patientsData,
+	cbData,
+	lastDocument,
+	setLastDocument
+) => {
 	db.collection("patients")
 		.orderBy("createdAt", "desc")
 		.startAfter(lastDocument)
-		.limit(3)
-		.get()
-		.then((querySnapshot) => {
-			const nextlastDocument =
-				querySnapshot.docs[querySnapshot.docs.length - 1] || null;
+		.limit(numberOfPatients)
+		.onSnapshot(({ docs }) => {
+			const nextlastDocument = docs[docs.length - 1] || null;
 			setLastDocument(nextlastDocument);
-			querySnapshot.forEach((doc) => {
+			docs.map((doc) => {
 				const data = doc.data();
 				const { id } = doc;
 				const { createdAt } = data;
@@ -227,6 +234,7 @@ export const nextPatients = (cbData, lastDocument, setLastDocument) => {
 					month: "2-digit",
 					year: "numeric",
 				}).format(date);
+
 				cbData((state) => [
 					...state,
 					{ ...data, id, createdAt: normalizedCreatedAt },
@@ -236,18 +244,15 @@ export const nextPatients = (cbData, lastDocument, setLastDocument) => {
 };
 
 export const fetchGames = async (cbData) =>
-	db
-		.collection("games")
-		.get()
-		.then(({ docs }) => {
-			const document = [];
-			docs.map((doc) => {
-				const data = doc.data();
-				const { id } = doc;
-				document.push({ ...data, id });
-			});
-			cbData(document);
+	db.collection("games").onSnapshot(({ docs }) => {
+		const document = [];
+		docs.map((doc) => {
+			const data = doc.data();
+			const { id } = doc;
+			document.push({ ...data, id });
 		});
+		cbData(document);
+	});
 
 // Consultar Administrador (usado para consultar al admin logeado)
 export const fetchTherapist = (uid) =>
@@ -290,10 +295,10 @@ export const fetchPatient = (uid) =>
 			return document;
 		});
 
-export const searchFilterPatient = (name) =>
+export const searchFilterPatient = (ci) =>
 	db
 		.collection("patients")
-		.where("name", "==", name)
+		.where("ci", "==", ci)
 		.get()
 		.then((querySnapshot) => {
 			const document = [];
@@ -363,6 +368,8 @@ export const updateDatesPlayed = (id, data) => {
 // Recuperar contraseña por correo
 export const restorePasswordWithEmail = (email) =>
 	firebase.auth().sendPasswordResetEmail(email);
+
+// Consultar Dispositivos
 export const fetchAgents = async (cbData) =>
 	db
 		.collection("agents")
@@ -376,6 +383,10 @@ export const fetchAgents = async (cbData) =>
 			});
 			cbData(document);
 		});
+
+// Actualiza la contraseña
+export const updatePassword = (newPassword) =>
+	firebase.auth().currentUser.updatePassword(newPassword);
 
 // Obtener enlace de descarga de Imagenes
 export const getUrlImg = (path) =>

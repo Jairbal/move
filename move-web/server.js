@@ -4,13 +4,14 @@ const io = require("socket.io")(server);
 const next = require("next");
 const MoveAgent = require("move-agent");
 const { handleFatalError, pipe } = require("move-utils");
+const { mqttHost } = require("./next.config");
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
-const nextHandler = nextApp.getRequestHandler();
+const nextHandler = nextApp.getRequestHandler()
 
-const agent = new MoveAgent();
+const agent = new MoveAgent({ mqtt:{ host: mqttHost}});
 
 // Socket.io / Websockets
 io.on("connect", (socket) => {

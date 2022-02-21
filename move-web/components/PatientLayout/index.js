@@ -5,8 +5,13 @@ import { AuthContext } from "context/AuthContext";
 // import { PatientPageContext } from "context/PatientPageContext";
 
 export default function PatientLayout({ children }) {
-	const { authUserPatient, authUserTherapist, handleSingOut } =
-		useContext(AuthContext);
+	const {
+		user,
+		authUserPatient,
+		authUserTherapist,
+		handleSingOut,
+		resetStatesAuth,
+	} = useContext(AuthContext);
 
 	const router = useRouter();
 	const subMenu = router.pathname;
@@ -22,7 +27,10 @@ export default function PatientLayout({ children }) {
 		if (authUserTherapist) {
 			router.replace("/admin/pacientes");
 		}
-	}, [authUserTherapist]);
+		if (user === null) {
+			resetStatesAuth();
+		}
+	}, [authUserTherapist, user]);
 
 	if (!authUserPatient) {
 		return null;
@@ -125,14 +133,6 @@ export default function PatientLayout({ children }) {
 									className="dropdown-menu dropdown-menu-dark text-small shadow"
 									aria-labelledby="dropdownUser1"
 								>
-									<li>
-										<button type="button" className=" dropdown-item" href="/">
-											Perfil
-										</button>
-									</li>
-									<li>
-										<hr className="dropdown-divider" />
-									</li>
 									<li onClick={handleSingOut}>
 										{" "}
 										<p className="dropdown-item">Cerrar Sesión</p>

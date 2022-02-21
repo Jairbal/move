@@ -1,4 +1,27 @@
-// Da Formato al tiempo
+export const formatMinutesCountdown = (date) => {
+	if (!date) return "0";
+	const mm = date.getUTCMinutes();
+	//	const cm = Math.round(date.getMilliseconds() / 10);
+
+	// cm = cm < 10 ? `0${cm}` : cm;
+
+	// return `${mm}:${ss}:${cm}`;
+
+	return `${mm}`;
+};
+
+export const formatSecondsCountdown = (date) => {
+	if (!date) return "0";
+	let ss = date.getSeconds();
+	//	const cm = Math.round(date.getMilliseconds() / 10);
+	// cm = cm < 10 ? `0${cm}` : cm;
+	ss = ss < 10 ? `${ss}` : ss;
+	// return `${mm}:${ss}:${cm}`;
+
+	return `${ss}`;
+};
+
+// Da Formato al tiempo para gestionar datos con la BD
 export const timeFormat = (date) => {
 	if (!date) return "00:00";
 	let mm = date.getUTCMinutes();

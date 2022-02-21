@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/client";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 
 export const USER_STATES = {
 	NOT_LOGGED: null,
@@ -10,15 +10,15 @@ export const USER_STATES = {
 
 export default function useUser() {
 	const [user, setUser] = useState(USER_STATES.NOT_KNOWN);
-	const router = useRouter();
+	// const router = useRouter();
 
 	useEffect(() => {
 		onAuthStateChanged(setUser);
 	}, []);
 
-	useEffect(() => {
+	/* 	useEffect(() => {
 		user === USER_STATES.NOT_LOGGED && router.push("/");
-	}, [user]);
+	}, [user]); */
 
 	return user;
 }
