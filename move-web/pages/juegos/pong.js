@@ -17,6 +17,8 @@ import {
 
 import ModalAgent from "components/ModalAgent";
 import { timeResult, addTime, timeFormat } from "utils/helperTimePlayed";
+import { fetchGamesOfPatient } from "firebase/client";
+import { useRouter } from "next/router";
 
 export default function pong() {
   const { authUserTherapist, authUserPatient } = useContext(AuthContext);
@@ -24,7 +26,6 @@ export default function pong() {
   const [agentConnected, setAgentConnected] = useState(null);
   const [agentSelected, setAgentSelected] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(true);
-  let valY = 0;
 
   // Estados para reloj
   const [diff, setDiff] = useState(null);
@@ -34,9 +35,33 @@ export default function pong() {
   // Estado para almacenar informacion de datesPlayed
   const [datesPlayed, setDatesPlayed] = useState(null);
   const [loadDatesPlayed, setLoadDatesPlayed] = useState(true);
+  const [typeUser, setTypeUser] = useState("");
+  const router = useRouter();
+  const idGame = "4E06EyUJCD83UPNsaMBB";
+
+  
+  let valY = 0;
+
+  useEffect(() => {
+    setTypeUser(localStorage.getItem("typeUser"));
+  }, [])
+
+  useEffect(() => {
+    let isValid = false;
+    if (typeUser === "patient" && authUserPatient !== undefined) {
+      authUserPatient.games.forEach((game) => {
+        if(game.idGame === idGame) {
+          isValid = true;
+        }
+      });
+      !isValid && router.replace("/actividades");
+    } else if (typeUser === null) {
+      router.replace("/");
+    }
+  }, [typeUser, authUserPatient]);
 
   useSocket("agent/message", (newAgent) => {
-    valY = -(newAgent.metrics[1].value / 20);
+    valY = -(newAgent.metrics[1].value);
 
     if (newAgent.agent.uuid === agentSelected) {
       console.log(`ValY = ${valY}`);
@@ -84,9 +109,9 @@ export default function pong() {
       start();
     });
 
-    return () => {
-      unityContext.removeEventListener("timeValidate");
-    };
+    unityContext.removeEventListener("timeValidate");
+
+    
   }, [diff, datesPlayed]);
 
   useEffect(() => {

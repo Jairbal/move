@@ -14,7 +14,7 @@ const options = {
   username: 'move',
   interval: 5000,
   mqtt: {
-    host: 'mqtt://localhost'
+    host: 'mqtt://api.fisio-move.xyz'
   }
 }
 

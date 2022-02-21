@@ -13,9 +13,11 @@ import {
   readDatesPlayed,
   createDatesPlayed,
   updateDatesPlayed,
+  fetchGamesOfPatient,
 } from "firebase/client";
 import { timeResult, addTime, timeFormat } from "utils/helperTimePlayed";
 import ModalAgent from "components/ModalAgent";
+import { useRouter } from "next/router";
 
 export default function pacman() {
   const { authUserTherapist, authUserPatient } = useContext(AuthContext);
@@ -30,10 +32,30 @@ export default function pacman() {
   // Estado para almacenar informacion de datesPlayed
   const [datesPlayed, setDatesPlayed] = useState(null);
   const [loadDatesPlayed, setLoadDatesPlayed] = useState(true);
-  var socket = null;
+  const [typeUser, setTypeUser] = useState("");
+  const router = useRouter();
+  const idGame = "4k3UN2yd7X1oCnLPxXkz";
 
   let valX = 0;
   let valY = 0;
+
+  useEffect(() => {
+    setTypeUser(localStorage.getItem("typeUser"));
+  }, []);
+
+  useEffect(() => {
+    let isValid = false;
+    if (typeUser === "patient" && authUserPatient !== undefined) {
+      authUserPatient.games.forEach((game) => {
+        if (game.idGame === idGame) {
+          isValid = true;
+        }
+      });
+      !isValid && router.replace("/actividades");
+    } else if (typeUser === null) {
+      router.replace("/");
+    }
+  }, [typeUser, authUserPatient]);
 
   const unityContext = new UnityContext({
     loaderUrl: "/Games/Pacman/Build/pacman.loader.js",
@@ -43,8 +65,8 @@ export default function pacman() {
   });
 
   useSocket("agent/message", (newAgent) => {
-    valX = newAgent.metrics[0].value / 20;
-    valY = -(newAgent.metrics[1].value / 20);
+    valX = newAgent.metrics[0].value;
+    valY = -newAgent.metrics[1].value;
 
     if (newAgent.agent.uuid === agentSelected) {
       console.log(`ValX = ${valX}`);
@@ -60,9 +82,8 @@ export default function pacman() {
     console.log("agent Disconnected", ` ${newAgent.id}`);
   });
 
-  socket = useSocket("agent/connected", (newAgent) => {
+  useSocket("agent/connected", (newAgent) => {
     setAgentConnected(newAgent);
-    console.log("Agenteeeeeee conectado");
   });
 
   const tick = () => {

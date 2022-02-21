@@ -16,17 +16,21 @@ const customStyles = {
 
 Modal.setAppElement("#modal");
 
-export default function ModalAgent({ setSelected, modalIsOpen, setModalIsOpen }) {
-  const { authUserTherapist } = useContext(AuthContext);
+export default function ModalAgent({
+  setSelected,
+  modalIsOpen,
+  setModalIsOpen,
+}) {
+  const { authUserPatient, authUserTherapist } = useContext(AuthContext);
   const [agentSelected, setAgentSelected] = useState("");
   const [isAgentSelected, setisAgentSelected] = useState(false);
   const [agents, setAgents] = useState([]);
 
   useEffect(() => {
-    if (authUserTherapist) {
+    if (authUserPatient || authUserTherapist) {
       fetchAgents(setAgents);
     }
-  }, [authUserTherapist]);
+  }, [authUserPatient, authUserTherapist]);
 
   useEffect(() => {
     if (agents.length > 0) {
@@ -43,7 +47,7 @@ export default function ModalAgent({ setSelected, modalIsOpen, setModalIsOpen })
 
   const closeModal = () => {
     setModalIsOpen(false);
-  }
+  };
 
   return (
     <Modal isOpen={modalIsOpen} style={customStyles}>
@@ -53,6 +57,7 @@ export default function ModalAgent({ setSelected, modalIsOpen, setModalIsOpen })
           <form>
             <div className="mb-3">
               <select
+                disabled={agents.length > 0 ? false : true}
                 className="form-select"
                 aria-label="Default select example"
                 value={agentSelected}
@@ -65,7 +70,12 @@ export default function ModalAgent({ setSelected, modalIsOpen, setModalIsOpen })
                 ))}
               </select>
             </div>
-            <button type="button" className="btn btn-primary" onClick={set}>
+            <button
+              disabled={agents.length > 0 ? false : true}
+              type="button"
+              className="btn btn-primary"
+              onClick={set}
+            >
               Empezar a Jugar
             </button>
           </form>

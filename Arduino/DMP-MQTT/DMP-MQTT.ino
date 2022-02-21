@@ -13,6 +13,7 @@
 // INT - Pin 2
 
 #include <Arduino.h>
+#include <WiFiManager.h> 
 #include <WiFi.h>
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
@@ -33,8 +34,6 @@ MPU6050 mpu;
 //MPU6050 mpu(0x69); // <-- use for AD0 high
 
 #define INTERRUPT_PIN 18
-#define LED_PIN 13
-bool blinkState = false;
 
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
@@ -61,13 +60,13 @@ void dmpDataReady() {
 ***********************************************************/
 //const char* ssid = "PUNTONET_ANDREA";
 //const char* password = "isca1999";
-const char* ssid = "fg5df";
-const char* password = "a0b9c8d7e6f5";
+//const char* ssid = "fg5df";
+//const char* password = "a0b9c8d7e6f5";
 /**********************************************************
 *****              CONFIGURACIÓN MQTT              *****
 ***********************************************************/
 // HOST MQTT
-const char* mqtt_server = "192.168.0.104";
+const char* mqtt_server = "api.fisio-move.xyz";
 // PORT MQTT
 const int mqtt_port = 1883;
 
@@ -140,7 +139,7 @@ void setup() {
 }
 
 void setup_wifi() {
-  delay(10);
+  /*delay(10);
   // Nos conectamos a nuestra red Wifi
   Serial.println();
   Serial.print("Conectando a ssid: ");
@@ -156,7 +155,19 @@ void setup_wifi() {
   Serial.println("");
   Serial.println("Conectado a red WiFi!");
   Serial.println("Dirección IP: ");
-  Serial.println(WiFi.localIP());
+  Serial.println(WiFi.localIP());*/
+
+  WiFi.mode(WIFI_STA);
+  WiFiManager wm;
+  wm.setClass("invert");
+  bool res;
+  res = wm.autoConnect("MOVE");
+
+  if(!res){
+    Serial.println("Falló la conexión WiFi");
+  }else{
+    Serial.println("Conexión WiFi establecida");
+  }
 }
 
 void reconnect() {
@@ -278,7 +289,7 @@ void loop() {
 
     client.publish("agent/message", buffer, n);
 
-    delay(100);
+    delay(40);
   }
   client.loop();
 

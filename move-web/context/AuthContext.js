@@ -7,47 +7,58 @@ import { useRouter } from "next/router";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-	const user = useUser();
-	const [authUserTherapist, setAuthUserTherapist] = useState();
-	const [authUserPatient, setAuthUserPatient] = useState();
-	const router = useRouter();
+  const user = useUser();
+  const [authUserTherapist, setAuthUserTherapist] = useState();
+  const [authUserPatient, setAuthUserPatient] = useState();
+  const router = useRouter();
 
-	useEffect(() => {
-		let isTherapist = false;
-		if (user) {
-			fetchTherapist(user.uid)
-				.then((therapist) => {
-					setAuthUserTherapist(therapist[0]);
-					isTherapist = true;
-				})
-				.catch((err) => console.log(err));
+  useEffect(() => {
+    let isTherapist = false;
+    if (user) {
+      fetchTherapist(user.uid)
+        .then((therapist) => {
+          if (therapist.length > 0) {
+            setAuthUserTherapist(therapist[0]);
+            isTherapist = true;
+            localStorage.setItem("typeUser", "therapist");
+          }
+        })
+        .catch((err) => console.log(err));
 
-			if (!isTherapist) {
-				fetchPatient(user.uid)
-					.then((patient) => setAuthUserPatient(patient[0]))
-					.catch((err) => console.log(err));
-			}
-		}
-	}, [user]);
+      if (!isTherapist) {
+        fetchPatient(user.uid)
+          .then((patient) => {
+            if (patient.length > 0) {
+              setAuthUserPatient(patient[0]);
+              localStorage.setItem("typeUser", "patient");
+            }
+          })
+          .catch((err) => console.log(err));
+      }
+      localStorage.setItem("userId", user.uid);
+    }
+  }, [user]);
 
-	const handleSingOut = () => {
-		singOut().then(() => {
-			setAuthUserTherapist(undefined);
-			setAuthUserPatient(undefined);
-			router.replace("/");
-		});
-	};
+  const handleSingOut = () => {
+    singOut().then(() => {
+      setAuthUserTherapist(undefined);
+      setAuthUserPatient(undefined);
+      localStorage.removeItem("userId");
+      localStorage.removeItem("typeUser");
+      router.replace("/");
+    });
+  };
 
-	return (
-		<AuthContext.Provider
-			value={{
-				user,
-				authUserTherapist,
-				authUserPatient,
-				handleSingOut,
-			}}
-		>
-			{children}
-		</AuthContext.Provider>
-	);
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        authUserTherapist,
+        authUserPatient,
+        handleSingOut,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
