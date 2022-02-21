@@ -17,18 +17,25 @@ export const AuthProvider = ({ children }) => {
 		if (user) {
 			fetchTherapist(user.uid)
 				.then((therapist) => {
-					setAuthUserTherapist(therapist[0]);
-					isTherapist = true;
+					if (therapist.length > 0) {
+						setAuthUserTherapist(therapist[0]);
+						isTherapist = true;
+						localStorage.setItem("typeUser", "therapist");
+					}
 				})
 				.catch((err) => console.log(err));
 
 			if (!isTherapist) {
 				fetchPatient(user.uid)
 					.then((patient) => {
-						setAuthUserPatient(patient[0]);
+						if (patient.length > 0) {
+							setAuthUserPatient(patient[0]);
+							localStorage.setItem("typeUser", "patient");
+						}
 					})
 					.catch((err) => console.log(err));
 			}
+			localStorage.setItem("userId", user.uid);
 		}
 	}, [user]);
 
@@ -40,6 +47,8 @@ export const AuthProvider = ({ children }) => {
 
 	const handleSingOut = () => {
 		singOut().then(() => {
+			localStorage.removeItem("userId");
+			localStorage.removeItem("typeUser");
 			resetStatesAuth();
 		});
 	};

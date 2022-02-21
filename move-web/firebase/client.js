@@ -244,15 +244,18 @@ export const nextPatients = (
 };
 
 export const fetchGames = async (cbData) =>
-	db.collection("games").onSnapshot(({ docs }) => {
-		const document = [];
-		docs.map((doc) => {
-			const data = doc.data();
-			const { id } = doc;
-			document.push({ ...data, id });
+	db
+		.collection("games")
+		.get()
+		.then(({ docs }) => {
+			const document = [];
+			docs.map((doc) => {
+				const data = doc.data();
+				const { id } = doc;
+				document.push({ ...data, id });
+			});
+			cbData(document);
 		});
-		cbData(document);
-	});
 
 // Consultar Administrador (usado para consultar al admin logeado)
 export const fetchTherapist = (uid) =>
@@ -402,4 +405,6 @@ export const deleteImg = (path) =>
 	firebase.storage().ref().child(path).delete();
 
 // Desconectarse
-export const singOut = () => firebase.auth().signOut();
+export const singOut = () => {
+	firebase.auth().signOut();
+};

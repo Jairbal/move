@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "start2": "NODE_ENV=production node server.js &",
+    "start2": "NODE_ENV=production nohup node server.js &",
     "lint": "eslint . --fix"
   },
   "dependencies": {

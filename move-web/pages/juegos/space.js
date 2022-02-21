@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable consistent-return */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable no-param-reassign */
@@ -17,6 +18,7 @@ import {
 
 import ModalAgent from "components/ModalAgent";
 import { timeResult, addTime } from "utils/helperTimePlayed";
+import { useRouter } from "next/router";
 
 export default function space() {
 	const { authUserTherapist, authUserPatient } = useContext(AuthContext);
@@ -34,6 +36,35 @@ export default function space() {
 	// Estado para almacenar informacion de datesPlayed
 	const [datesPlayed, setDatesPlayed] = useState(null);
 	const [loadDatesPlayed, setLoadDatesPlayed] = useState(true);
+
+	// State barra de progreso unity
+	const [progression, setProgression] = useState(0);
+	const [isLoaded, setIsLoaded] = useState(false);
+
+	//
+	const [typeUser, setTypeUser] = useState("");
+	const router = useRouter();
+	const idGame = "YyULfaJWAJpqPxSiJXGZ";
+
+	const valX = 0;
+
+	useEffect(() => {
+		setTypeUser(localStorage.getItem("typeUser"));
+	}, []);
+
+	useEffect(() => {
+		let isValid = false;
+		if (typeUser === "patient" && authUserPatient !== undefined) {
+			authUserPatient.games.forEach((game) => {
+				if (game.idGame === idGame) {
+					isValid = true;
+				}
+			});
+			!isValid && router.replace("/actividades");
+		} else if (typeUser === null) {
+			router.replace("/");
+		}
+	}, [typeUser, authUserPatient]);
 
 	/* 	const socketAgentConnected = useSocket("agent/connected", (newAgent) => {
 		setAgentConnected(newAgent);
@@ -164,50 +195,80 @@ export default function space() {
 		width: "100vw",
 	};
 
-	if (metrics) {
-		return (
-			<>
-				<div className="wrapper">
-					{/* <h1>{timeFormat(diff)}</h1> */}
+	// Barra de progreso unity
+	useEffect(() => {
+		unityContext.on("progress", (progression) => {
+			setProgression(progression);
+			console.log(progression);
+		});
+		// Evento Unity para comprobar si esta cargado
+		unityContext.on("loaded", () => {
+			setIsLoaded(true);
+		});
+	}, [unityContext]);
 
-					<div className="unity">
-						<ModalAgent
-							setSelected={setAgentSelected}
-							modalIsOpen={modalIsOpen}
-							setModalIsOpen={setModalIsOpen}
-						/>
-						{agentSelected !== null && (
-							<>
-								<CountTimer time={diff} />
-								<Unity unityContext={unityContext} style={unityStyle} />
-							</>
-						)}
-					</div>
+	return (
+		<>
+			<div className="wrapper">
+				{/* <h1>{timeFormat(diff)}</h1> */}
+
+				<div className="unity">
+					<ModalAgent
+						setSelected={setAgentSelected}
+						modalIsOpen={modalIsOpen}
+						setModalIsOpen={setModalIsOpen}
+					/>
+					{agentSelected !== null && (
+						<>
+							<CountTimer time={diff} />
+							{!isLoaded && (
+								<div className=" progressBar progress">
+									<div
+										className="progress-bar progress-bar-striped bg-success progress-bar-animated"
+										role="progressbar"
+										aria-valuenow={progression * 100}
+										aria-valuemin="0"
+										aria-valuemax="100"
+										style={{ width: `${progression * 100}%` }}
+									>
+										{`${progression * 100}%`}
+									</div>
+								</div>
+							)}
+							<Unity unityContext={unityContext} style={unityStyle} />
+						</>
+					)}
 				</div>
+			</div>
 
-				<style jsx>
-					{`
-						.wrapper {
-							background-color: #0d6efd;
-							width: 100vw;
-							height: 100vh;
-							display: flex;
-							justify-content: center;
-							align-items: flex-end;
-						}
+			<style jsx>
+				{`
+					.wrapper {
+						background-color: #0d6efd;
+						width: 100vw;
+						height: 100vh;
+						display: flex;
+						justify-content: center;
+						align-items: flex-end;
+					}
 
-						h1 {
-							text-align: center;
-							color: white;
-							margin-bottom: 13px;
-							text-shadow: 3px 1px #0d6efd;
-							font-size: 50px;
-							margin: 0;
-						}
-					`}
-				</style>
-			</>
-		);
-	}
-	return <div>Por favor, conecte un dispositivo...</div>;
+					.progressBar {
+						position: absolute;
+						width: 75%;
+						top: 50%;
+						left: 13%;
+					}
+
+					h1 {
+						text-align: center;
+						color: white;
+						margin-bottom: 13px;
+						text-shadow: 3px 1px #0d6efd;
+						font-size: 50px;
+						margin: 0;
+					}
+				`}
+			</style>
+		</>
+	);
 }

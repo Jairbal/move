@@ -18,6 +18,7 @@ import {
 
 import ModalAgent from "components/ModalAgent";
 import { timeResult, addTime } from "utils/helperTimePlayed";
+import { useRouter } from "next/router";
 
 export default function pong() {
 	const { authUserTherapist, authUserPatient } = useContext(AuthContext);
@@ -35,6 +36,33 @@ export default function pong() {
 	// Estado para almacenar informacion de datesPlayed
 	const [datesPlayed, setDatesPlayed] = useState(null);
 	const [loadDatesPlayed, setLoadDatesPlayed] = useState(true);
+
+	// State barra de progreso unity
+	const [progression, setProgression] = useState(0);
+	const [isLoaded, setIsLoaded] = useState(false);
+
+	//
+	const [typeUser, setTypeUser] = useState("");
+	const router = useRouter();
+	const idGame = "4E06EyUJCD83UPNsaMBB";
+
+	useEffect(() => {
+		setTypeUser(localStorage.getItem("typeUser"));
+	}, []);
+
+	useEffect(() => {
+		let isValid = false;
+		if (typeUser === "patient" && authUserPatient !== undefined) {
+			authUserPatient.games.forEach((game) => {
+				if (game.idGame === idGame) {
+					isValid = true;
+				}
+			});
+			!isValid && router.replace("/actividades");
+		} else if (typeUser === null) {
+			router.replace("/");
+		}
+	}, [typeUser, authUserPatient]);
 
 	useSocket("agent/message", (newAgent) => {
 		valY = -(newAgent.metrics[1].value / 20);
@@ -161,14 +189,27 @@ export default function pong() {
 	const unityStyle = {
 		height: "90vh",
 		width: "95vw",
+		visibility: isLoaded ? "visible" : "hidden",
 	};
+
+	// Barra de progreso unity
+	useEffect(() => {
+		unityContext.on("progress", (progression) => {
+			setProgression(progression);
+			console.log(progression);
+		});
+		// Evento Unity para comprobar si esta cargado
+		unityContext.on("loaded", () => {
+			setIsLoaded(true);
+		});
+	}, [unityContext]);
 
 	return (
 		<>
 			<div className="wrapper">
 				{/* <h1>{timeFormat(diff)}</h1> */}
 
-				<div className="unity">
+				<div>
 					<ModalAgent
 						setSelected={setAgentSelected}
 						modalIsOpen={modalIsOpen}
@@ -177,6 +218,21 @@ export default function pong() {
 					{agentSelected !== null && (
 						<>
 							<CountTimer time={diff} />
+							{!isLoaded && (
+								<div className=" progressBar progress">
+									<div
+										className="progress-bar progress-bar-striped bg-success progress-bar-animated"
+										role="progressbar"
+										aria-valuenow={progression * 100}
+										aria-valuemin="0"
+										aria-valuemax="100"
+										style={{ width: `${progression * 100}%` }}
+									>
+										{`${progression * 100}%`}
+									</div>
+								</div>
+							)}
+
 							<Unity
 								unityContext={unityContext}
 								devicePixelRatio={2}
@@ -196,6 +252,13 @@ export default function pong() {
 						display: flex;
 						justify-content: center;
 						align-items: flex-end;
+					}
+
+					.progressBar {
+						position: absolute;
+						width: 75%;
+						top: 50%;
+						left: 13%;
 					}
 
 					h1 {

@@ -13,6 +13,7 @@ const nextHandler = nextApp.getRequestHandler()
 
 const agent = new MoveAgent({ mqtt:{ host: mqttHost}});
 
+
 // Socket.io / Websockets
 io.on("connect", (socket) => {
   console.log(`Client Connected ${socket.id}`);

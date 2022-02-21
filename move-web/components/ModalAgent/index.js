@@ -9,7 +9,6 @@ const customStyles = {
 		left: "50%",
 		right: "auto",
 		bottom: "auto",
-
 		marginRight: "-50%",
 		transform: "translate(-50%, -50%)",
 	},
@@ -22,16 +21,16 @@ export default function ModalAgent({
 	modalIsOpen,
 	setModalIsOpen,
 }) {
-	const { authUserTherapist } = useContext(AuthContext);
+	const { authUserPatient, authUserTherapist } = useContext(AuthContext);
 	const [agentSelected, setAgentSelected] = useState("");
 	const [isAgentSelected, setisAgentSelected] = useState(false);
 	const [agents, setAgents] = useState([]);
 
 	useEffect(() => {
-		if (authUserTherapist) {
+		if (authUserPatient || authUserTherapist) {
 			fetchAgents(setAgents);
 		}
-	}, [authUserTherapist]);
+	}, [authUserPatient, authUserTherapist]);
 
 	useEffect(() => {
 		if (agents.length > 0) {
@@ -58,6 +57,7 @@ export default function ModalAgent({
 					<form>
 						<div className="mb-3">
 							<select
+								disabled={!(agents.length > 0)}
 								className="form-select"
 								aria-label="Default select example"
 								value={agentSelected}
@@ -70,7 +70,12 @@ export default function ModalAgent({
 								))}
 							</select>
 						</div>
-						<button type="button" className="btn btn-primary" onClick={set}>
+						<button
+							disabled={!(agents.length > 0)}
+							type="button"
+							className="btn btn-primary"
+							onClick={set}
+						>
 							Empezar a Jugar
 						</button>
 					</form>

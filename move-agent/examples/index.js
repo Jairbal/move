@@ -3,7 +3,10 @@ const MoveAgent = require('../')
 const agent = new MoveAgent({
   name: 'myapp',
   username: 'admin',
-  interval: 2000
+  interval: 2000,
+  mqtt: {
+    host: 'mqtt://api.fisio-move.xyz'
+  }
 })
 
 agent.addMetric('rss', function getRss () {
