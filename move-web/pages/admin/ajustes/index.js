@@ -121,7 +121,6 @@ export default function ajustes() {
 									<th scope="col">#</th>
 									<th scope="col">Nombre</th>
 									<th scope="col">ID</th>
-									<th scope="col">Acciones</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -132,9 +131,6 @@ export default function ajustes() {
 											<th scope="row">{countRow}</th>
 											<td>{agent.name}</td>
 											<td>{agent.agentId}</td>
-											<td>
-												<i className="bi bi-pencil-square link-primary cursorPointer fs-5" />
-											</td>
 										</tr>
 									);
 								})}

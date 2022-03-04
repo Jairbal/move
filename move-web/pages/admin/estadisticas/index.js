@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable camelcase */
 /* eslint-disable no-lonely-if */
 /* eslint-disable no-unused-expressions */
@@ -5,6 +6,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-console */
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import AdminLayout from "components/AdminLayout";
@@ -12,7 +14,7 @@ import { fetchPatient, readDatesPlayed } from "firebase/client";
 import { addTime } from "utils/helperTimePlayed";
 
 export default function estadisticas({ uid }) {
-	const [dataTimePlayed, setDataTimePlayed] = useState(null);
+	const [dataTimePlayed, setDataTimePlayed] = useState(undefined);
 
 	const [patient, setPatient] = useState();
 	// Estados del total jugado para cada juego
@@ -33,7 +35,7 @@ export default function estadisticas({ uid }) {
 
 	// Auxiliar para contabilizar el # en la tabla
 	let aux = 0;
-	const timeIsComplete = "00:20";
+	const timeIsComplete = "10:00";
 
 	// Sumara el total de los tiempos existentes en el array
 	const AddAllTimes = (timesArray) => {
@@ -48,17 +50,29 @@ export default function estadisticas({ uid }) {
 		return time;
 	};
 
+	const formatDate = (arrayDate) => {
+		const format = [];
+		arrayDate.map((item) => {
+			format.push(
+				`${new Date(item).getDate()}/${
+					new Date(item).getMonth() + 1
+				}/${new Date(item).getFullYear()}`
+			);
+		});
+		return format;
+	};
+
 	// Array de todas las fechas jugadas
 	const datesGraph = (totalDataPlayed) => {
 		const arrayDates = [];
 		totalDataPlayed
 			.sort((x, y) => x.date.localeCompare(y.date))
-			.forEach((data) => {
-				if (!arrayDates.includes(data.date)) {
-					arrayDates.push(data.date);
+			.forEach((item) => {
+				if (!arrayDates.includes(item.date)) {
+					arrayDates.push(item.date);
 				}
 			});
-		return arrayDates;
+		return formatDate(arrayDates);
 	};
 
 	// Reestructurar los arrays de data jugada
@@ -262,106 +276,145 @@ export default function estadisticas({ uid }) {
 			<div className="container d-grid">
 				<div className="row gap-3">
 					{!uid ? (
-						<div className="p-3 m-auto">
-							<h1>Seleccione al paciente</h1>
-							<p>Desde la sección Pacientes</p>
+						<div className="p-3 m-auto d-flex flex-column align-items-center justify-content-center">
+							<h1>Paciente no Seleccionado</h1>
+							<p className="text-center">
+								Seleccione al paciente <br />
+								desde la sección{" "}
+								<Link href="/admin/pacientes">
+									<strong className="cursorPointer link-primary">
+										Pacientes
+									</strong>
+								</Link>
+							</p>
 						</div>
 					) : null}
-					<div className="col-auto bg-white p-3 m-auto m-xl-0">
-						<h4 className="fw-bold ">Información</h4>
 
-						<p>
-							<strong>Descripción:</strong> <br />{" "}
-							{patient ? patient.description : "********"}
-						</p>
-						<p>
-							<strong>Edad del paciente:</strong> <br />{" "}
-							{patient ? `${patient.age} años` : "********"}
-						</p>
-						<div className="row">
-							<div className="col-auto d-flex flex-column">
-								<strong>Tiempo total:</strong>
-								<span className="ms-4">PONG:</span>
-								<span className="ms-4 ">SPACE:</span>
-								<span className="ms-4 ">PACMAN:</span>
-							</div>
-							<div className="col-auto d-flex flex-column">
-								<span>{totalTime || "********"}</span>
-								<span>{timePong || "********"}</span>
-								<span>{timeSpace || "********"}</span>
-								<span>{timePacman || "********"}</span>
+					{patient && (
+						<div className="col-auto bg-white p-3 m-auto m-xl-0">
+							<h4 className="fw-bold ">Información</h4>
+
+							<p>
+								<strong>Paciente:</strong> <br />{" "}
+								{patient ? patient.name : "********"}
+							</p>
+							<p>
+								<strong>Descripción:</strong> <br />{" "}
+								{patient ? patient.description : "********"}
+							</p>
+							<p>
+								<strong>Edad del paciente:</strong> <br />{" "}
+								{patient ? `${patient.age} años` : "********"}
+							</p>
+							<div className="row">
+								<div className="col-auto d-flex flex-column">
+									<strong>Tiempo total:</strong>
+									<span className="ms-4">PONG:</span>
+									<span className="ms-4 ">SPACE:</span>
+									<span className="ms-4 ">PACMAN:</span>
+								</div>
+								<div className="col-auto d-flex flex-column">
+									<span>{totalTime || "********"}</span>
+									<span>{timePong || "********"}</span>
+									<span>{timeSpace || "********"}</span>
+									<span>{timePacman || "********"}</span>
+								</div>
 							</div>
 						</div>
-					</div>
+					)}
 
-					<div className="col bg-white p-3 h-auto">
-						<div className="scroll heighTable">
-							<table className="table">
-								<thead className="user-select-none">
-									<tr>
-										<th scope="col">#</th>
-										<th scope="col">Fecha</th>
-										<th scope="col">Nombre</th>
-										<th scope="col">Tiempo (mm:ss)</th>
-										<th scope="col">Estado</th>
-									</tr>
-								</thead>
-								{uid ? (
-									<tbody>
-										{totalDataPlayed
-											? totalDataPlayed
-													.sort((x, y) => x.date.localeCompare(y.date))
-													.map((item) => {
-														aux += 1;
-														let isComplete = false;
-
-														if (item.timePlayed >= timeIsComplete) {
-															isComplete = true;
-														}
-
-														return (
-															<tr key={aux}>
-																<th scope="row">{aux}</th>
-																<td>{item.date}</td>
-																<td>{item.name}</td>
-																<td>{item.timePlayed}</td>
-																<td>
-																	<span
-																		className={`badge ${
-																			isComplete ? "bg-success" : "bg-secondary"
-																		}`}
-																	>
-																		{isComplete ? "Completado" : "Insuficiente"}
-																	</span>
-																</td>
-															</tr>
-														);
-													})
-											: null}
-									</tbody>
-								) : (
-									<tbody>
+					{dataTimePlayed && (
+						<div className="col bg-white p-3 h-auto">
+							<div className="scroll heighTable">
+								<table className="table">
+									<thead className="user-select-none">
 										<tr>
-											<th scope="row">*</th>
-											<td>**/**/****</td>
-											<td>******** </td>
-											<td>********</td>
-											<td>
-												<span className="badge bg-secondary">********</span>
-											</td>
+											<th scope="col">#</th>
+											<th scope="col">Fecha</th>
+											<th scope="col">Nombre</th>
+											<th scope="col">Tiempo (mm:ss)</th>
+											<th scope="col">Estado</th>
 										</tr>
-									</tbody>
-								)}
-							</table>
+									</thead>
+									{uid ? (
+										<tbody>
+											{totalDataPlayed
+												? totalDataPlayed
+														.sort((x, y) => {
+															const c = new Date(x.date).getTime();
+															const d = new Date(y.date).getTime();
+															if (c > d) return 1;
+															if (c < d) return -1;
+															return 0;
+														})
+														.map((item) => {
+															const formatDate = `${new Date(
+																item.date
+															).getDate()}/${
+																new Date(item.date).getMonth() + 1
+															}/${new Date(item.date).getFullYear()}`;
+															aux += 1;
+															let isComplete = false;
+
+															if (item.timePlayed >= timeIsComplete) {
+																isComplete = true;
+															}
+
+															return (
+																<tr key={aux}>
+																	<th scope="row">{aux}</th>
+																	<td>{formatDate}</td>
+																	<td>{item.name}</td>
+																	<td>{item.timePlayed}</td>
+																	<td>
+																		<span
+																			className={`badge ${
+																				isComplete
+																					? "bg-success"
+																					: "bg-secondary"
+																			}`}
+																		>
+																			{isComplete
+																				? "Completado"
+																				: "Insuficiente"}
+																		</span>
+																	</td>
+																</tr>
+															);
+														})
+												: null}
+										</tbody>
+									) : (
+										<tbody>
+											<tr>
+												<th scope="row">*</th>
+												<td>**/**/****</td>
+												<td>******** </td>
+												<td>********</td>
+												<td>
+													<span className="badge bg-secondary">********</span>
+												</td>
+											</tr>
+										</tbody>
+									)}
+								</table>
+							</div>
 						</div>
-					</div>
+					)}
 				</div>
 
-				<div className="row gap-3 mt-3">
-					<div className="col bg-white p-3">
-						<Line data={uid ? data : noData} options={options} />
+				{dataTimePlayed && (
+					<div className="row gap-3 mt-3">
+						<div className="col bg-white p-3">
+							<Line data={uid ? data : noData} options={options} />
+						</div>
 					</div>
-				</div>
+				)}
+				{dataTimePlayed === null && (
+					<div className="d-flex justify-content-center mt-5 h4">
+						<p>El paciente no ha realizado actividades</p>
+					</div>
+				)}
 			</div>
 			<style jsx>
 				{`

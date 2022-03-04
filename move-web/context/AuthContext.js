@@ -46,11 +46,10 @@ export const AuthProvider = ({ children }) => {
 	};
 
 	const handleSingOut = () => {
-		singOut().then(() => {
-			localStorage.removeItem("userId");
-			localStorage.removeItem("typeUser");
-			resetStatesAuth();
-		});
+		localStorage.removeItem("userId");
+		localStorage.removeItem("typeUser");
+		singOut();
+		resetStatesAuth();
 	};
 
 	return (

@@ -353,8 +353,12 @@ export const readDatesPlayed = (uid, cbData) => {
 				const data = doc.data();
 
 				document.push({ ...data, id: doc.id });
-				cbData(document[0]);
 			});
+			if (document.length === 0) {
+				cbData(null);
+			} else {
+				cbData(document[0]);
+			}
 		});
 };
 

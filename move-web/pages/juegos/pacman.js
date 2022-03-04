@@ -34,9 +34,6 @@ export default function pacman() {
 	const [datesPlayed, setDatesPlayed] = useState(null);
 	const [loadDatesPlayed, setLoadDatesPlayed] = useState(true);
 
-	// State barra de progreso unity
-	const [progression, setProgression] = useState(0);
-	const [isLoaded, setIsLoaded] = useState(false);
 	//
 	const [typeUser, setTypeUser] = useState("");
 	const router = useRouter();
@@ -45,6 +42,7 @@ export default function pacman() {
 
 	let valX = 0;
 	let valY = 0;
+	let timePlayed = null;
 
 	const unityContext = new UnityContext({
 		loaderUrl: "/Games/Pacman/Build/pacman.loader.js",
@@ -52,6 +50,11 @@ export default function pacman() {
 		frameworkUrl: "/Games/Pacman/Build/pacman.framework.js",
 		codeUrl: "/Games/Pacman/Build/pacman.wasm",
 	});
+
+	const unityStyle = {
+		height: "60vh",
+		width: "100vw",
+	};
 
 	useEffect(() => {
 		setTypeUser(localStorage.getItem("typeUser"));
@@ -94,52 +97,26 @@ export default function pacman() {
 		console.log("Agenteeeeeee conectado");
 	});
 
-	const tick = () => {
-		setDiff(new Date(+new Date() - initial));
-	};
-
-	// Inicia el reloj
-	const start = () => {
-		if (initial === null) {
-			setInitial(+new Date());
-			const firstTime = new Date();
-			setInitialTime(firstTime);
-		}
-	};
-
 	useEffect(() => {
 		if (!datesPlayed && authUserPatient) {
 			// Leer fechas jugadas del paciente
 			readDatesPlayed(authUserPatient.uid, setDatesPlayed);
 			setLoadDatesPlayed(false);
 		}
+	}, [datesPlayed]);
 
-		if (diff) {
-			requestAnimationFrame(tick);
-		}
-
-		// Evento que se llama al dar click en el boton jugar
-		unityContext.on("timeValidate", (validateTime) => {
-			start();
+	useEffect(() => {
+		unityContext.on("GameOver", (userName, score) => {
+			timePlayed = userName;
 		});
 
 		return () => {
-			unityContext.removeEventListener("timeValidate");
-		};
-	}, [diff, datesPlayed]);
-
-	useEffect(() => {
-		if (initial) {
-			requestAnimationFrame(tick);
-		}
-		return () => {
-			if (initial != null) {
+			if (timePlayed !== null) {
 				if (!authUserTherapist) {
 					const finalTime = new Date();
-					const timePlayed = timeResult(initialTime, finalTime);
-					const currentDate = `${finalTime.getDate()}/${
+					const currentDate = `${finalTime.getFullYear()}/${
 						finalTime.getMonth() + 1
-					}/${finalTime.getFullYear()}`;
+					}/${finalTime.getDate()}`;
 					if (!datesPlayed && loadDatesPlayed) {
 						// si no encuentra información
 						// crea el documento
@@ -150,7 +127,6 @@ export default function pacman() {
 						createDatesPlayed(data);
 					} else if (!loadDatesPlayed && datesPlayed) {
 						// Se Busca si existe la fecha actual
-
 						if (datesPlayed.PACMAN === undefined) {
 							const data = {
 								...datesPlayed,
@@ -189,24 +165,8 @@ export default function pacman() {
 					}
 				}
 			}
+			unityContext.removeAllEventListeners();
 		};
-	}, [initial]);
-
-	const unityStyle = {
-		height: "90vh",
-		width: "90vw",
-	};
-
-	// Barra de progreso unity
-	useEffect(() => {
-		unityContext.on("progress", (progression) => {
-			setProgression(progression);
-			console.log(progression);
-		});
-		// Evento Unity para comprobar si esta cargado
-		unityContext.on("loaded", () => {
-			setIsLoaded(true);
-		});
 	}, [unityContext]);
 
 	return (
@@ -222,21 +182,6 @@ export default function pacman() {
 					/>
 					{agentSelected !== null && (
 						<>
-							<CountTimer time={diff} />
-							{!isLoaded && (
-								<div className=" progressBar progress">
-									<div
-										className="progress-bar progress-bar-striped bg-success progress-bar-animated"
-										role="progressbar"
-										aria-valuenow={progression * 100}
-										aria-valuemin="0"
-										aria-valuemax="100"
-										style={{ width: `${progression * 100}%` }}
-									>
-										{`${progression * 100}%`}
-									</div>
-								</div>
-							)}
 							<Unity unityContext={unityContext} style={unityStyle} />
 						</>
 					)}
@@ -251,14 +196,7 @@ export default function pacman() {
 						height: 100vh;
 						display: flex;
 						justify-content: center;
-						align-items: flex-end;
-					}
-
-					.progressBar {
-						position: absolute;
-						width: 75%;
-						top: 50%;
-						left: 13%;
+						align-items: center;
 					}
 
 					h1 {

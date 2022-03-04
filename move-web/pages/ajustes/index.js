@@ -1,8 +1,8 @@
 /* eslint-disable consistent-return */
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { AuthContext } from "context/AuthContext";
 import PatientLayout from "components/PatientLayout";
-import { updatePassword, fetchAgents } from "firebase/client";
+import { updatePassword } from "firebase/client";
 
 export default function ajustes() {
 	const [readNewPassword, setReadNewPassword] = useState({
@@ -11,8 +11,6 @@ export default function ajustes() {
 	});
 	const [messageError, setMessageError] = useState(null);
 	const [validateUpdate, setValidateUpdate] = useState(null);
-	const [agents, setAgents] = useState(null);
-	let countRow = 0;
 
 	const { handleSingOut } = useContext(AuthContext);
 
@@ -54,10 +52,6 @@ export default function ajustes() {
 			setMessageError("Complete los campos");
 		}
 	};
-
-	useEffect(() => {
-		fetchAgents(setAgents);
-	}, []);
 
 	return (
 		<>
@@ -106,42 +100,6 @@ export default function ajustes() {
 							</button>
 						</form>
 					</div>
-				</div>
-			</div>
-			<hr />
-			<div className="row mt-3">
-				<div className="row gap-3 d-flex m-auto flex-column align-items-center">
-					{/* Fila 2 Columna 2  */}
-					<div className="col-10 bg-white">
-						<h4 className="fw-bold mt-2">Dispositivos agregados</h4>
-						<table className="table">
-							<thead className="user-select-none">
-								<tr>
-									<th scope="col">#</th>
-									<th scope="col">Registrado</th>
-									<th scope="col">Nombre</th>
-									<th scope="col">ID</th>
-									<th scope="col">Acciones</th>
-								</tr>
-							</thead>
-							<tbody>
-								{agents.map((agent) => {
-									countRow += 1;
-									return (
-										<tr key={agent.id}>
-											<th scope="row">{countRow}</th>
-											<td>{agent.name}</td>
-											<td>{agent.agentId}</td>
-											<td>
-												<i className="bi bi-pencil-square link-primary cursorPointer fs-5" />
-											</td>
-										</tr>
-									);
-								})}
-							</tbody>
-						</table>
-					</div>
-					{/* Fila 2 Columna 1 */}
 				</div>
 			</div>
 

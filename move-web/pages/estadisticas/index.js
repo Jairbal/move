@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable no-lonely-if */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-shadow */
@@ -33,7 +34,7 @@ export default function estadisticas() {
 
 	// Auxiliar para contabilizar el # en la tabla
 	let aux = 0;
-	const timeIsComplete = "00:20";
+	const timeIsComplete = "10:00";
 
 	// Sumara el total de los tiempos existentes en el array
 	const AddAllTimes = (timesArray) => {
@@ -48,17 +49,30 @@ export default function estadisticas() {
 		return time;
 	};
 
+	const formatDate = (arrayDate) => {
+		const format = [];
+		arrayDate.map((item) => {
+			format.push(
+				`${new Date(item).getDate()}/${
+					new Date(item).getMonth() + 1
+				}/${new Date(item).getFullYear()}`
+			);
+		});
+		return format;
+	};
+
 	// Array de todas las fechas jugadas
 	const datesGraph = (totalDataPlayed) => {
 		const arrayDates = [];
 		totalDataPlayed
 			.sort((x, y) => x.date.localeCompare(y.date))
-			.forEach((data) => {
-				if (!arrayDates.includes(data.date)) {
-					arrayDates.push(data.date);
+			.forEach((item) => {
+				if (!arrayDates.includes(item.date)) {
+					arrayDates.push(item.date);
 				}
 			});
-		return arrayDates;
+
+		return formatDate(arrayDates);
 	};
 
 	// Reestructurar los arrays de data jugada
@@ -286,8 +300,19 @@ export default function estadisticas() {
 								<tbody>
 									{totalDataPlayed
 										? totalDataPlayed
-												.sort((x, y) => x.date.localeCompare(y.date))
+												.sort((x, y) => {
+													const c = new Date(x.date).getTime();
+													const d = new Date(y.date).getTime();
+													if (c > d) return 1;
+													if (c < d) return -1;
+													return 0;
+												})
 												.map((item) => {
+													const formatDate = `${new Date(
+														item.date
+													).getDate()}/${
+														new Date(item.date).getMonth() + 1
+													}/${new Date(item.date).getFullYear()}`;
 													aux += 1;
 													let isComplete = false;
 
@@ -298,7 +323,7 @@ export default function estadisticas() {
 													return (
 														<tr key={aux}>
 															<th scope="row">{aux}</th>
-															<td>{item.date}</td>
+															<td>{formatDate}</td>
 															<td>{item.name}</td>
 															<td>{item.timePlayed}</td>
 															<td>
